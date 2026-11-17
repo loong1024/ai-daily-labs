@@ -1,0 +1,50 @@
+{
+  "app_title": "个人专注番茄钟 · Vibe Pomodoro",
+  "goal_input_placeholder": "【写下此刻最想推进的一件小事】",
+  "timer_modes": [
+    {
+      "id": "focus",
+      "label": "专注 25 分钟",
+      "seconds": 1500,
+      "counts_as_focus_round": true
+    },
+    {
+      "id": "short_break",
+      "label": "短休 5 分钟",
+      "seconds": 300,
+      "counts_as_focus_round": false
+    },
+    {
+      "id": "long_break",
+      "label": "长休 15 分钟",
+      "seconds": 900,
+      "counts_as_focus_round": false
+    },
+    {
+      "id": "quick_demo",
+      "label": "10 秒极速演示",
+      "seconds": 10,
+      "counts_as_focus_round": true
+    }
+  ],
+  "preset_goals": [
+    "写完本周项目周报的 3 条核心结论",
+    "一口气清零收件箱里积压的 8 封待回邮件",
+    "精读完今日《AI 日课》并记下 1 条行动启发",
+    "完成客户提案前 5 页核心逻辑自检",
+    "整理昨日用户访谈录音中的高频痛点清单",
+    "关掉聊天弹窗，专注推进手头最难的一小步"
+  ],
+  "vibe_iterations": {
+    "round_1_elements": [
+      "界面与视觉：浅米色护眼居中卡片 + 大字号分秒倒计时 + 今日单点目标输入框",
+      "核心交互按钮：25/5/15 分钟三模式标签 + 开始/暂停切换按钮 + 重置当前计时按钮",
+      "成就反馈细节：今日已完成专注轮数徽章 + 清零计数按钮 + 归零弹出休息提醒横幅"
+    ],
+    "round_2_additions": [
+      "10 秒极速演示按钮（当场跑通归零反馈闭环）",
+      "深色护眼模式切换开关（浅米色日间 / 深色夜间双主题）",
+      "导出专注记录按钮（本地生成复盘记录文件下载）"
+    ]
+  }
+}

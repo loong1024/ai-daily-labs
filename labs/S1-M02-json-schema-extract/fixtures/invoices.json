@@ -1,0 +1,170 @@
+[
+  {
+    "id": "INV-01",
+    "tag": "normal",
+    "expected_amount": 1260.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-02",
+    "email_text": "财务同事好，附上阿里云服务器月度账单增值税专用发票（销方：阿里云计算有限公司），开票日期 2026-03-02，价税合计 CNY 1260.00，请安排入账。"
+  },
+  {
+    "id": "INV-02",
+    "tag": "chatty_wrapper",
+    "expected_amount": 240.0,
+    "expected_currency": "USD",
+    "expected_date": "2026-03-05",
+    "email_text": "Hi Finance, attached is our GitHub Team seat subscription receipt from GitHub Inc., issued on 2026-03-05. Total paid: USD 240.00."
+  },
+  {
+    "id": "INV-03",
+    "tag": "normal",
+    "expected_amount": 580.5,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-06",
+    "email_text": "报销单备注：客户拜访高铁二等座电子客票（中国铁路），乘车及开票日期 2026-03-06，票面价税合计 580.50 元人民币。"
+  },
+  {
+    "id": "INV-04",
+    "tag": "normal",
+    "expected_amount": 3200.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-08",
+    "email_text": "供应商【上海文思设计工作室】已开具宣传册排版服务普通发票，开票日期：2026-03-08，价税合计：CNY 3200.00。"
+  },
+  {
+    "id": "INV-05",
+    "tag": "normal",
+    "expected_amount": 95.0,
+    "expected_currency": "USD",
+    "expected_date": "2026-03-09",
+    "email_text": "Cloudflare Pro plan monthly invoice from Cloudflare Inc., issue date 2026-03-09, invoice total USD 95.00."
+  },
+  {
+    "id": "INV-06",
+    "tag": "normal",
+    "expected_amount": 4680.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-10",
+    "email_text": "采购新员工显示器 4 台（销方：京东世纪贸易），发票开具日期 2026-03-10，价税合计人民币 4680.00 元。"
+  },
+  {
+    "id": "INV-07",
+    "tag": "normal",
+    "expected_amount": 1500.0,
+    "expected_currency": "USD",
+    "expected_date": "2026-03-11",
+    "email_text": "Vendor: Snowflake Inc. Usage statement and tax invoice dated 2026-03-11. Final billed amount: USD 1500.00."
+  },
+  {
+    "id": "INV-08",
+    "tag": "normal",
+    "expected_amount": 890.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-12",
+    "email_text": "深圳出差住宿费专票（华住酒店管理有限公司），开票日期 2026-03-12，价税合计 CNY 890.00。"
+  },
+  {
+    "id": "INV-09",
+    "tag": "normal",
+    "expected_amount": 420.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-13",
+    "email_text": "顺丰速运月结同城急件运费电子普票（顺丰速运有限公司），开票日期 2026-03-13，价税合计 CNY 420.00。"
+  },
+  {
+    "id": "INV-10",
+    "tag": "normal",
+    "expected_amount": 60.0,
+    "expected_currency": "USD",
+    "expected_date": "2026-03-14",
+    "email_text": "Linear workspace monthly invoice from Linear Orbit Inc., issued 2026-03-14, total charged USD 60.00."
+  },
+  {
+    "id": "INV-11",
+    "tag": "normal",
+    "expected_amount": 12000.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-15",
+    "email_text": "年度安全渗透测试首款发票，销方：北京奇安信网神，开票日期 2026-03-15，价税合计 CNY 12000.00。"
+  },
+  {
+    "id": "INV-12",
+    "tag": "normal",
+    "expected_amount": 310.0,
+    "expected_currency": "USD",
+    "expected_date": "2026-03-16",
+    "email_text": "Figma Organization seat add-on invoice (Figma Inc.), issue date 2026-03-16, amount due and paid: USD 310.00."
+  },
+  {
+    "id": "INV-13",
+    "tag": "multi_number_trap",
+    "distractor_amount": 1500.0,
+    "expected_amount": 1200.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-16",
+    "email_text": "会务场地租赁（上海虹桥会议中心）：原目录报价 CNY 1500.00，扣除老客户协议减免 300.00 元后，最终实开发票价税合计 CNY 1200.00，开票日期 2026-03-16。"
+  },
+  {
+    "id": "INV-14",
+    "tag": "multi_number_trap",
+    "distractor_amount": 800.0,
+    "expected_amount": 520.0,
+    "expected_currency": "USD",
+    "expected_date": "2026-03-17",
+    "email_text": "AWS promotional credit notice: gross usage was USD 800.00, startup credit covered USD 280.00, final tax invoice issued by Amazon Web Services on 2026-03-17 for net payable USD 520.00."
+  },
+  {
+    "id": "INV-15",
+    "tag": "multi_number_trap",
+    "distractor_amount": 5000.0,
+    "expected_amount": 3600.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-17",
+    "email_text": "设备租赁结算（深圳凌云仪器）：合同曾冻结押金 CNY 5000.00（押金不开票将原路退回），本期实际租金开票价税合计 CNY 3600.00，开票日期 2026-03-17。"
+  },
+  {
+    "id": "INV-16",
+    "tag": "multi_number_trap",
+    "distractor_amount": 2000.0,
+    "expected_amount": 1680.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-18",
+    "email_text": "部门团建餐饮报销（海底捞餐饮）：部门审批预算上限 CNY 2000.00，门店实际消费并开具电子普票价税合计 CNY 1680.00，开票日期 2026-03-18。"
+  },
+  {
+    "id": "INV-17",
+    "tag": "trap_future_date",
+    "bad_initial_date": "2099-12-01",
+    "expected_amount": 450.0,
+    "expected_currency": "USD",
+    "expected_date": "2026-03-18",
+    "email_text": "OCR 扫描文本附注：顶部污损行误把开票日期识别成了 2099-12-01；核对下方税控签章与邮件正文（Vendor: Vercel Inc.），真实开票日期为 2026-03-18，价税合计 USD 450.00。"
+  },
+  {
+    "id": "INV-18",
+    "tag": "trap_negative_amount",
+    "bad_initial_amount": -300.0,
+    "expected_amount": 880.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-20",
+    "email_text": "发票重开说明（销方：北京金山办公）：上月旧票冲红抵扣行显示 CNY -300.00，本次重新开具的正式正数增值税发票价税合计 CNY 880.00，开票日期 2026-03-20。"
+  },
+  {
+    "id": "INV-19",
+    "tag": "false_positive_study",
+    "distractor_amount": 9800.0,
+    "expected_amount": 4900.0,
+    "expected_currency": "CNY",
+    "expected_date": "2026-03-21",
+    "email_text": "翻译服务分期结算（上海译文商务）：全年框架估算总额 CNY 9800.00 仅供参考未开票；附件为第一期正式结算电子发票，价税合计 CNY 4900.00，开票日期 2026-03-21。"
+  },
+  {
+    "id": "INV-20",
+    "tag": "false_positive_study",
+    "distractor_amount": 1000.0,
+    "expected_amount": 760.0,
+    "expected_currency": "USD",
+    "expected_date": "2026-03-22",
+    "email_text": "Datadog monthly billing (Datadog Inc.): initial pro-forma estimate was USD 1000.00, while finalized official invoice dated 2026-03-22 has total amount USD 760.00."
+  }
+]

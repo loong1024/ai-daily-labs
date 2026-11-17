@@ -1,0 +1,72 @@
+[
+  {
+    "doc_id": "DOC-GW-101",
+    "title": "UpstreamPool 连接池与超时配置手册",
+    "published_at": "2026-04-12",
+    "tags": ["UpstreamPool", "gateway", "timeout"],
+    "content": "UpstreamPool 组件超时配置需在 gateway.yaml 的 upstream_pool 段显式设置 connect_timeout_ms（默认 3000ms）与 read_timeout_ms（默认 10000ms），避免慢实例拖垮连接池。"
+  },
+  {
+    "doc_id": "DOC-NOISE-901",
+    "title": "前端弹窗与 Toast 提示超时怎么配",
+    "published_at": "2026-02-10",
+    "tags": ["frontend", "toast", "ui"],
+    "content": "前端通知组件那它的超时怎么配？在页面 ToastConfig 中设置超时怎么配参数 autoCloseMs（默认 2500ms）即可控制浮层自动关闭。"
+  },
+  {
+    "doc_id": "DOC-ERR-502",
+    "title": "网关故障排查：ERR_502_TIMEOUT 与空闲连接复用",
+    "published_at": "2026-06-18",
+    "tags": ["troubleshooting", "ERR_502_TIMEOUT", "keepalive"],
+    "content": "当网关压测偶发报 ERR_502_TIMEOUT 且日志提示 check_keepalive_idle 失败时，根因是上游 Nginx keepalive_timeout（如 30s）小于网关 check_keepalive_idle 阈值（默认 60s），需将网关空闲复用检测下调至 20s。"
+  },
+  {
+    "doc_id": "DOC-NOISE-902",
+    "title": "通用压测偶发报错排查概览",
+    "published_at": "2026-05-01",
+    "tags": ["stress_test", "general"],
+    "content": "压测时偶发报网关异常，日志提示连接失败，怎么排查？通用压测超时怎么配建议先查看客户端压测机网卡带宽、CPU 水位与并发线程数。"
+  },
+  {
+    "doc_id": "DOC-AUTH-2025",
+    "title": "2025 版网关鉴权限流技术规范",
+    "published_at": "2025-05-20",
+    "tags": ["auth", "rate_limit", "2025"],
+    "content": "2025 年网关鉴权限流方案采用单机本地令牌桶限流与静态 JWT 公钥定时轮转，各可用区节点独立计数，跨机房配额不共享。"
+  },
+  {
+    "doc_id": "DOC-AUTH-2026",
+    "title": "2026 版网关鉴权限流技术规范",
+    "published_at": "2026-03-15",
+    "tags": ["auth", "rate_limit", "2026"],
+    "content": "2026 年网关鉴权限流方案升级为 Redis Cluster 全局滑动窗口限流 + SPIFFE mTLS 双向证书动态下发，支持租户级毫秒熔断。"
+  },
+  {
+    "doc_id": "DOC-AUTH-2023",
+    "title": "2023 早期网关鉴权限流对比草案（已归档废弃）",
+    "published_at": "2023-08-01",
+    "tags": ["legacy", "archived", "auth"],
+    "content": "对比去年和今年的网关鉴权限流方案有哪些核心变化？2023 早期网关鉴权限流方案采用 Basic Auth 明文头转发与固定分钟级计数器，现已全面废弃。"
+  },
+  {
+    "doc_id": "DOC-VEC-2026",
+    "title": "2026 向量索引分片扩容规范（现行标准）",
+    "published_at": "2026-09-01",
+    "tags": ["vector_index", "sharding", "2026"],
+    "content": "向量索引分片扩容规范（2026 现行标准）：单分片向量规模突破 500 万条时自动触发一致性哈希双写分裂，HNSW ef_construction 固定为 200，零停机切换。"
+  },
+  {
+    "doc_id": "DOC-VEC-2024",
+    "title": "2024 旧版向量索引分片扩容规范（历史归档）",
+    "published_at": "2024-07-11",
+    "tags": ["vector_index", "legacy", "2024"],
+    "content": "今年最新发布的向量索引分片扩容规范是什么？2024 版要求凌晨停机窗口手动导出快照并全量重建 IVF_FLAT 分片索引。"
+  },
+  {
+    "doc_id": "DOC-CHAT-NOISE",
+    "title": "工单客服礼貌致谢与双语回复模板",
+    "published_at": "2026-01-10",
+    "tags": ["customer_service", "translation"],
+    "content": "你好，非常清楚了，谢谢！当用户表达谢谢或要求把上面那句话翻成英文时，坐席可使用标准英文结束语礼貌结单。"
+  }
+]

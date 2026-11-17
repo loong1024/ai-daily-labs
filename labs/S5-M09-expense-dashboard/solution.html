@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>个人习惯打卡与日常开支小看板</title>
+  <style>
+    :root {
+      --bg: #f3f6f9;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0f766e;
+      --primary-hover: #115e59;
+      --habit-bg: #ccfbf1;
+      --habit-fg: #0f766e;
+      --expense-bg: #ffedd5;
+      --expense-fg: #c2410c;
+      --danger: #dc2626;
+      --warn-bg: #fef2f2;
+      --warn-border: #fecaca;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px 16px 48px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .board-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .board-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: 2px solid rgba(15, 118, 110, 0.2);
+      border-color: var(--primary);
+    }
+
+    .hint-toast {
+      display: none;
+      margin-bottom: 12px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: var(--danger);
+      font-size: 13px;
+    }
+
+    .hint-toast.visible {
+      display: block;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      min-width: 120px;
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: #eef2f7;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 560px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .metric-box {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .metric-value {
+      margin-top: 4px;
+      font-size: 21px;
+      font-weight: 700;
+    }
+
+    .metric-habit {
+      color: var(--habit-fg);
+    }
+
+    .metric-expense {
+      color: var(--expense-fg);
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .filter-bar select {
+      padding: 7px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      font-size: 13px;
+      background: #ffffff;
+    }
+
+    .record-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .record-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      background: #ffffff;
+    }
+
+    .record-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-habit {
+      background: var(--habit-bg);
+      color: var(--habit-fg);
+    }
+
+    .badge-expense {
+      background: var(--expense-bg);
+      color: var(--expense-fg);
+    }
+
+    .tag-category {
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .record-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .record-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .record-amount {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .btn-delete {
+      padding: 5px 10px;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      background: #fff1f2;
+      color: var(--danger);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      padding: 28px 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>个人习惯打卡与日常开支小看板</h1>
+      <p>单文件本地离线运行 · 自动保存至浏览器 localStorage · 支持筛选汇总与防乱码 CSV 导出</p>
+    </header>
+
+    <div class="board-layout">
+      <section class="card" aria-label="录入面板">
+        <h2>新增记录</h2>
+        <div id="formWarning" class="hint-toast" role="alert"></div>
+
+        <form id="entryForm" novalidate>
+          <div class="field">
+            <label for="dateInput">日期</label>
+            <input id="dateInput" type="date" required />
+          </div>
+
+          <div class="field">
+            <label for="titleInput">事项名称</label>
+            <input id="titleInput" type="text" placeholder="如：夜跑 5 公里 / 工作日简餐（假设）" />
+          </div>
+
+          <div class="field">
+            <label for="typeInput">记录类型</label>
+            <select id="typeInput">
+              <option value="习惯打卡">习惯打卡</option>
+              <option value="日常开支">日常开支</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="categoryInput">分类标签</label>
+            <select id="categoryInput">
+              <option value="阅读">阅读</option>
+              <option value="运动">运动</option>
+              <option value="餐饮">餐饮</option>
+              <option value="交通">交通</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="valueInput">数值备注（打卡分钟数 / 假设开支元）</label>
+            <input id="valueInput" type="number" min="0" step="0.01" value="25" />
+          </div>
+
+          <button class="btn-primary" type="submit">保存记录</button>
+        </form>
+
+        <div class="toolbar-actions">
+          <button id="demoBtn" class="btn-secondary" type="button">填入示例数据</button>
+          <button id="exportCsvBtn" class="btn-secondary" type="button">导出 CSV</button>
+        </div>
+      </section>
+
+      <section class="card" aria-label="筛选与列表面板">
+        <div class="summary-grid">
+          <div class="metric-box">
+            <div class="metric-label">当前筛选记录条数</div>
+            <div id="visibleCount" class="metric-value">0</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">累计打卡次数</div>
+            <div id="habitCount" class="metric-value metric-habit">0 次</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">假设开支总额</div>
+            <div id="expenseTotal" class="metric-value metric-expense">¥0.00</div>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <label for="filterType">类型筛选：</label>
+          <select id="filterType">
+            <option value="全部">全部类型</option>
+            <option value="习惯打卡">习惯打卡</option>
+            <option value="日常开支">日常开支</option>
+          </select>
+
+          <label for="filterCategory">分类筛选：</label>
+          <select id="filterCategory">
+            <option value="全部">全部分类</option>
+            <option value="阅读">阅读</option>
+            <option value="运动">运动</option>
+            <option value="餐饮">餐饮</option>
+            <option value="交通">交通</option>
+          </select>
+        </div>
+
+        <ul id="recordList" class="record-list"></ul>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "aid_s5_m09_habit_expense_records_v1";
+
+    const DEMO_RECORDS = [
+      { id: "demo-1", date: "2026-03-01", title: "精读《人月神话》第二章", type: "习惯打卡", category: "阅读", value: 45 },
+      { id: "demo-2", date: "2026-03-01", title: "工作日简餐, 鸡胸肉能量碗（假设）", type: "日常开支", category: "餐饮", value: 28.5 },
+      { id: "demo-3", date: "2026-03-02", title: "夜跑 5 公里有氧打卡", type: "习惯打卡", category: "运动", value: 32 },
+      { id: "demo-4", date: "2026-03-02", title: "地铁通勤往返（假设）", type: "日常开支", category: "交通", value: 12.0 },
+      { id: "demo-5", date: "2026-03-03", title: "手冲咖啡豆 \"浅烘果香\"（假设）", type: "日常开支", category: "餐饮", value: 65.0 },
+      { id: "demo-6", date: "2026-03-03", title: "晨间核心力量训练", type: "习惯打卡", category: "运动", value: 25 }
+    ];
+
+    function loadRecords() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (err) {
+        return [];
+      }
+    }
+
+    function saveRecords(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    let records = loadRecords();
+
+    function getTodayISO() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function showWarning(msg) {
+      const box = document.getElementById("formWarning");
+      if (!msg) {
+        box.textContent = "";
+        box.classList.remove("visible");
+        return;
+      }
+      box.textContent = msg;
+      box.classList.add("visible");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function escapeCsvCell(val) {
+      const text = String(val ?? "");
+      if (text.includes(",") || text.includes("\"") || text.includes("\n")) {
+        return `"${text.replace(/"/g, "\"\"")}"`;
+      }
+      return text;
+    }
+
+    function getFilteredRecords() {
+      const selectedType = document.getElementById("filterType").value;
+      const selectedCategory = document.getElementById("filterCategory").value;
+      return records.filter((item) => {
+        const matchType = selectedType === "全部" || item.type === selectedType;
+        const matchCategory = selectedCategory === "全部" || item.category === selectedCategory;
+        return matchType && matchCategory;
+      });
+    }
+
+    function computeSummary(filtered) {
+      const habitCount = filtered.filter((item) => item.type === "习惯打卡").length;
+      const expenseTotal = filtered
+        .filter((item) => item.type === "日常开支")
+        .reduce((acc, item) => acc + (Number(item.value) || 0), 0);
+      return {
+        visibleCount: filtered.length,
+        habitCount,
+        expenseTotal
+      };
+    }
+
+    function renderBoard() {
+      const filtered = getFilteredRecords();
+      const summary = computeSummary(filtered);
+
+      document.getElementById("visibleCount").textContent = String(summary.visibleCount);
+      document.getElementById("habitCount").textContent = `${summary.habitCount} 次`;
+      document.getElementById("expenseTotal").textContent = `¥${summary.expenseTotal.toFixed(2)}`;
+
+      const listEl = document.getElementById("recordList");
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<li class="empty-state">当前筛选条件下暂无记录，可左侧录入或点击“填入示例数据”体验。</li>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered
+        .map((item) => {
+          const isHabit = item.type === "习惯打卡";
+          const badgeClass = isHabit ? "badge badge-habit" : "badge badge-expense";
+          const unitText = isHabit
+            ? `${Number(item.value || 0)} 分钟`
+            : `¥${Number(item.value || 0).toFixed(2)}`;
+          return `
+            <li class="record-item">
+              <div>
+                <div class="record-meta">
+                  <span>${escapeHtml(item.date)}</span>
+                  <span class="${badgeClass}">${escapeHtml(item.type)}</span>
+                  <span class="tag-category">${escapeHtml(item.category)}</span>
+                </div>
+                <div class="record-title">${escapeHtml(item.title)}</div>
+              </div>
+              <div class="record-right">
+                <span class="record-amount">${escapeHtml(unitText)}</span>
+                <button class="btn-delete" type="button" data-delete-id="${escapeHtml(item.id)}">删除</button>
+              </div>
+            </li>
+          `;
+        })
+        .join("");
+    }
+
+    document.getElementById("dateInput").value = getTodayISO();
+
+    document.getElementById("entryForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const titleRaw = document.getElementById("titleInput").value;
+      const cleanTitle = titleRaw.trim();
+      if (!cleanTitle) {
+        showWarning("请先填写事项名称，不能为空或纯空格。");
+        document.getElementById("titleInput").focus();
+        return;
+      }
+
+      const rawVal = Number(document.getElementById("valueInput").value);
+      const safeVal = Number.isFinite(rawVal) && rawVal >= 0 ? rawVal : 0;
+
+      showWarning("");
+      records.unshift({
+        id: `rec-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        date: document.getElementById("dateInput").value || getTodayISO(),
+        title: cleanTitle,
+        type: document.getElementById("typeInput").value,
+        category: document.getElementById("categoryInput").value,
+        value: safeVal
+      });
+      saveRecords(records);
+      document.getElementById("titleInput").value = "";
+      renderBoard();
+    });
+
+    document.getElementById("recordList").addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const deleteId = target.getAttribute("data-delete-id");
+      if (!deleteId) return;
+      if (!window.confirm("确定要删除这条记录吗？删除后无法撤销。")) {
+        return;
+      }
+      records = records.filter((item) => item.id !== deleteId);
+      saveRecords(records);
+      renderBoard();
+    });
+
+    document.getElementById("filterType").addEventListener("change", renderBoard);
+    document.getElementById("filterCategory").addEventListener("change", renderBoard);
+
+    document.getElementById("demoBtn").addEventListener("click", () => {
+      showWarning("");
+      records = DEMO_RECORDS.map((item) => ({ ...item }));
+      saveRecords(records);
+      renderBoard();
+    });
+
+    document.getElementById("exportCsvBtn").addEventListener("click", () => {
+      const filtered = getFilteredRecords();
+      const headers = ["日期", "事项名称", "记录类型", "分类标签", "数值备注"];
+      const lines = [headers.map(escapeCsvCell).join(",")];
+      filtered.forEach((item) => {
+        lines.push([
+          item.date,
+          item.title,
+          item.type,
+          item.category,
+          item.value
+        ].map(escapeCsvCell).join(","));
+      });
+
+      const csvContent = "\uFEFF" + lines.join("\r\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `habit-expense-${getTodayISO()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+
+    renderBoard();
+  </script>
+</body>
+</html>

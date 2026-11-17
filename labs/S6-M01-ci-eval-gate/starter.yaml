@@ -1,0 +1,39 @@
+# S6-M01 记账分类回归评测配置 —— 起点半成品（存在多处回归门禁缺陷）
+description: "记账分类回归评测（基线草稿）"
+
+prompts:
+  - file://prompts/classify_v1.txt
+  - file://prompts/classify_v2_broken.txt
+
+providers:
+  - id: openai:chat:gpt-4o-mini
+    config:
+      temperature: 0.7
+
+ci_gate:
+  min_pass_rate: 0.60
+  block_on_regression: false
+  rollback_prompt: ""
+
+tests:
+  - description: "简单午饭样例"
+    vars:
+      case_id: "bk_01"
+      text: "午饭 兰州牛肉面 28 元"
+    assert:
+      - type: llm-rubric
+        value: "输出看起来是餐饮分类即可"
+  - description: "简单打车样例"
+    vars:
+      case_id: "bk_02"
+      text: "早高峰打车去虹桥火车站 65 元"
+    assert:
+      - type: llm-rubric
+        value: "输出看起来是交通分类即可"
+  - description: "简单买书样例"
+    vars:
+      case_id: "bk_05"
+      text: "买技术书《数据密集型应用系统设计》 89 元"
+    assert:
+      - type: llm-rubric
+        value: "输出包含买书金额即可"

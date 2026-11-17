@@ -1,0 +1,24 @@
+{
+  "issue_id": "2026-W20",
+  "timezone": "Asia/Shanghai",
+  "scheduled_cron": "0 9 * * 1",
+  "topic": "确定性 AI 工作流与生产防呆周刊",
+  "highlights": [
+    "结构化输出与分隔符防注入隔离在工单分流中的落地实践",
+    "自动化流水线六维只读安全审查清单",
+    "幂等键、指数退避抖动与人工审批超时止损设计"
+  ],
+  "reference_links": [
+    "https://example.org/ai-daily/ch5-structured-output",
+    "https://example.org/ai-daily/ch5-idempotent-workflow"
+  ],
+  "quality_gate": {
+    "min_chars": 80,
+    "max_chars": 800,
+    "forbid_unfilled_placeholder": true
+  },
+  "pricing": {
+    "estimated_cost_per_call_usd": 0.004,
+    "default_issue_budget_usd": 0.05
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "article_title": "2026 企业智能体（AI Agent）落地趋势与合规简报（AI 初稿·待核查）",
+  "verify_date_example": "2026-11-16",
+  "high_risk_claim_ids": ["C1", "C2", "C3", "C4"],
+  "forbidden_in_final_draft": [
+    "78.6%",
+    "亚太智能体商业回报白皮书",
+    "陈志远",
+    "45 天内即可收回",
+    "0.015 美元",
+    "2025 年 11 月最新修订"
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "quote": "根据中国互联网络信息中心（CNNIC）发布的第 53 次统计报告显示，国内已有 78.6% 的制造业民营企业全面上线了生产排程智能体。",
+      "is_factual": true,
+      "type": "数字",
+      "expected_risk": "高",
+      "time_sensitive": "是（年度/半年度统计报告随新期次发布更新）",
+      "primary_org": "中国互联网络信息中心（CNNIC）官网",
+      "search_keywords": "CNNIC 第53次 中国互联网络发展状况统计报告 制造业 智能体",
+      "verification_finding": "证伪：查阅 CNNIC 官网（https://www.cnnic.com.cn）第 53 次报告全文，根本不存在‘78.6% 制造业民营企业全面上线生产排程智能体’的统计口径，属真机构嫁接假精确比例。",
+      "rewrite_action": "删除编造的 78.6% 比例及失实报告归因，改用不带伪造精确数字的定性描述。"
+    },
+    {
+      "id": "C2",
+      "quote": "斯坦福大学陈志远教授团队在《2025 亚太智能体商业回报白皮书》中指出，引入客服智能体的零售企业平均在 45 天内即可收回全部算力投入。",
+      "is_factual": true,
+      "type": "引用",
+      "expected_risk": "高",
+      "time_sensitive": "是（商业投资回报周期随算力单价与业务规模变化）",
+      "primary_org": "斯坦福大学以人为本人工智能研究院（Stanford HAI）官网及学术文献库",
+      "search_keywords": "Stanford HAI 2025 亚太智能体商业回报白皮书 陈志远",
+      "verification_finding": "无法证实（高度疑似捏造）：检索 Stanford HAI 官网（https://hai.stanford.edu）及主流学术数据库，均无‘陈志远教授团队’及《2025 亚太智能体商业回报白皮书》，‘45 天收回算力投入’无任何一手出处。",
+      "rewrite_action": "整句删除捏造的学者姓名、白皮书标题及‘45 天回本’数字，改为客观提示需结合场景评估投入产出比。"
+    },
+    {
+      "id": "C3",
+      "quote": "主流旗舰大模型 API 的输入调用价格目前已统一降至每百万 Token 仅需 0.015 美元。",
+      "is_factual": true,
+      "type": "技术细节",
+      "expected_risk": "高",
+      "time_sensitive": "是（厂商 API 定价按季度甚至按月动态调整，极易过期）",
+      "primary_org": "各主流大模型厂商官方定价页（OpenAI / Anthropic / Google Cloud / 阿里云百炼）",
+      "search_keywords": "OpenAI Anthropic Gemini 旗舰模型 API 官方定价 million tokens",
+      "verification_finding": "证伪：各厂商旗舰模型输入单价通常在每百万 Token 数美元区间，仅轻量级小模型或命中缓存才低至几美分，绝非‘旗舰模型统一降至 0.015 美元’。",
+      "rewrite_action": "删除失实的‘统一降至每百万 Token 0.015 美元’断言，改为‘轻量模型与缓存机制使推理成本较早期显著下降，具体单价需以各厂商官网实时价目表为准’。"
+    },
+    {
+      "id": "C4",
+      "quote": "国家网信办等七部门联合公布的《生成式人工智能服务管理暂行办法》（2025 年 11 月最新修订版）",
+      "is_factual": true,
+      "type": "时间",
+      "expected_risk": "高",
+      "time_sensitive": "是（法规修订状态需核对主管部门最新政令公告）",
+      "primary_org": "国家互联网信息办公室官网（政令法规栏目）",
+      "search_keywords": "国家网信办 生成式人工智能服务管理暂行办法 公布施行日期 修订",
+      "verification_finding": "证伪（日期失实）：核查国家网信办官网（https://www.cac.gov.cn），该办法于 2023 年 7 月公布、2023 年 8 月 15 日起施行，并不存在所谓‘2025 年 11 月最新修订版’。",
+      "rewrite_action": "删去编造的‘2025 年 11 月最新修订版’字样，准确表述为‘2023 年 8 月 15 日起施行的《生成式人工智能服务管理暂行办法》’。"
+    },
+    {
+      "id": "C5",
+      "quote": "面向境内公众提供生成式人工智能服务的机构须履行备案或登记合规义务。",
+      "is_factual": true,
+      "type": "人物机构",
+      "expected_risk": "中",
+      "time_sensitive": "是（各地网信部门备案与登记细则持续更新）",
+      "primary_org": "国家互联网信息办公室及属地网信办官网",
+      "search_keywords": "生成式人工智能服务管理暂行办法 第十七条 算法备案 上线登记",
+      "verification_finding": "已核实并需严谨限定：依据国家网信办官网《生成式人工智能服务管理暂行办法》第十七条及属地执行口径，提供具有舆论属性或者社会动员能力的生成式人工智能服务须履行备案或登记程序，企业纯内部自用不面向境内公众的通常不触发公众服务备案。",
+      "rewrite_action": "保留合规提醒并补齐‘提供具有舆论属性或社会动员能力的公众服务须按规定履行备案或登记程序’的准确限定。"
+    },
+    {
+      "id": "C6",
+      "quote": "建议各业务部门今年先从内部制度问答等低风险小场景切入试点，不必盲目追求全流程一步到位。",
+      "is_factual": false,
+      "type": "其他（观点与行动建议）",
+      "expected_risk": "非事实",
+      "time_sensitive": "否",
+      "primary_org": "不适用（主观管理建议，无需外部事实核查）",
+      "search_keywords": "不适用",
+      "verification_finding": "属于作者的业务推进建议与观点判断，应单独标记为‘非事实’，不纳入真伪核查。",
+      "rewrite_action": "保留建议原意，使上下文逻辑衔接自然。"
+    }
+  ]
+}

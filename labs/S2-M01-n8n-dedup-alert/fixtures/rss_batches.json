@@ -1,0 +1,86 @@
+{
+  "schedule_probe": {
+    "local_now": "2026-11-16T07:58:00+08:00",
+    "target_hour": 8,
+    "target_minute": 0,
+    "expected_timezone": "Asia/Shanghai",
+    "expected_wait_seconds": 120
+  },
+  "reference_now_utc": "2026-11-16T00:00:00Z",
+  "run_1_items": [
+    {
+      "feed": "hn-ai-digest",
+      "title": "SQLite-Vec 0.2 Brings Hybrid Metadata Filtering to Local RAG",
+      "link": "https://blog.example.com/posts/sqlite-vec-0-2",
+      "pubDate": "2026-11-15T18:30:00Z",
+      "contentSnippet": "SQLite-Vec 0.2 introduces pre-filtered KNN scans and lower memory overhead for edge RAG deployments."
+    },
+    {
+      "feed": "hn-ai-digest",
+      "title": "Running Deterministic Queue Workers in Lightweight Containers",
+      "link": "https://news.example.org/engineering/deterministic-workers",
+      "pubDate": "2026-11-15T21:15:00Z",
+      "contentSnippet": "Idempotent job keys and explicit dead-letter webhooks eliminate duplicate customer notifications."
+    },
+    {
+      "feed": "changelog-weekly",
+      "title": "[Cross-Post] SQLite-Vec 0.2 Hybrid Filtering Release Notes",
+      "link": "https://blog.example.com/posts/sqlite-vec-0-2",
+      "pubDate": "2026-11-15T19:00:00Z",
+      "contentSnippet": "Syndicated release notes for SQLite-Vec 0.2 sharing the exact canonical article URL."
+    },
+    {
+      "feed": "changelog-weekly",
+      "title": "Stale Weekend Recap From Two Days Ago",
+      "link": "https://blog.example.com/posts/stale-48h-recap",
+      "pubDate": "2026-11-13T20:00:00Z",
+      "contentSnippet": "Older than 24 hours and must be excluded before invoking the LLM summary node."
+    }
+  ],
+  "run_2_items": [
+    {
+      "feed": "hn-ai-digest",
+      "title": "SQLite-Vec 0.2 Brings Hybrid Metadata Filtering to Local RAG",
+      "link": "https://blog.example.com/posts/sqlite-vec-0-2",
+      "pubDate": "2026-11-15T18:30:00Z",
+      "contentSnippet": "Repeated item during second manual trigger 2 minutes later."
+    },
+    {
+      "feed": "hn-ai-digest",
+      "title": "Running Deterministic Queue Workers in Lightweight Containers",
+      "link": "https://news.example.org/engineering/deterministic-workers",
+      "pubDate": "2026-11-15T21:15:00Z",
+      "contentSnippet": "Repeated item during second manual trigger 2 minutes later."
+    },
+    {
+      "feed": "changelog-weekly",
+      "title": "OpenTelemetry GenAI Semantic Conventions v1.29 Published",
+      "link": "https://changelog.example.dev/releases/otel-genai-1-29",
+      "pubDate": "2026-11-15T23:50:00Z",
+      "contentSnippet": "Standardizes token usage, latency histograms, and retry attributes across workflow orchestrators."
+    }
+  ],
+  "fault_injections": [
+    {
+      "fault_id": "F01_invalid_api_credential",
+      "description": "故意填入失效占位密钥触发 401 鉴权失败",
+      "api_key_override": "FAKE_TEST_KEY_DO_NOT_USE_12345",
+      "mock_llm_raw_output": null,
+      "simulated_http_error": "401 Unauthorized: credential FAKE_TEST_KEY_DO_NOT_USE_12345 rejected"
+    },
+    {
+      "fault_id": "F02_malformed_non_json",
+      "description": "模型节点返回夹杂寒暄的非法 JSON 文本",
+      "api_key_override": null,
+      "mock_llm_raw_output": "好的，这是为您整理的今日摘要：{title: 未加引号的坏JSON",
+      "simulated_http_error": null
+    },
+    {
+      "fault_id": "F03_missing_required_schema_keys",
+      "description": "模型返回合法 JSON 但缺失 summary 与 tags 必填字段",
+      "api_key_override": null,
+      "mock_llm_raw_output": "{\"title\": \"仅有标题而漏掉摘要和标签数组\"}",
+      "simulated_http_error": null
+    }
+  ]
+}

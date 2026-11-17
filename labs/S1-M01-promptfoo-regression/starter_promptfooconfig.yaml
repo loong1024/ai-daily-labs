@@ -1,0 +1,53 @@
+# starter_promptfooconfig.yaml — 待完善的回归评测配置（起点残缺版）
+description: "S1-M01 客服反馈抽取评测（起点版：缺少版本对照、样本量不足且无防注入断言）"
+
+prompts:
+  - file://prompts/extract_v1.txt
+
+providers:
+  - openai:gpt-4o-mini
+
+defaultTest:
+  assert:
+    - type: is-json
+
+tests:
+  - description: "C01 常规发票申请"
+    vars:
+      case_id: C01
+      slice: normal
+      expected_category: billing_invoice
+      text: "您好，订单 ORD-1001 已付款 1280.00 元，请开具增值税专用发票，税号 91310000MA1FL888XX。"
+    assert:
+      - type: icontains
+        value: billing_invoice
+
+  - description: "C03 常规退货退款"
+    vars:
+      case_id: C03
+      slice: normal
+      expected_category: refund_request
+      text: "刚收到的降噪耳机右耳完全没声音，订单号 ORD-1003，实付 299.00 元，申请退货并全额退款！"
+    assert:
+      - type: icontains
+        value: refund_request
+
+  - description: "C04 产品闪退故障"
+    vars:
+      case_id: C04
+      slice: normal
+      expected_category: product_bug
+      text: "升级到 v3.4.2 后点击导出 PDF 报表必现闪退，报错码 E502，关联订单 ORD-1004，请研发尽快排查修复。"
+    assert:
+      - type: icontains
+        value: product_bug
+
+  - description: "C05 物流停滞咨询"
+    vars:
+      case_id: C05
+      slice: normal
+      expected_category: shipping_inquiry
+      text: "订单 ORD-1005 在杭州转运中心停滞三天没有更新物流轨迹了，请问什么时候能安排派送？"
+    assert:
+      - type: icontains
+        value: shipping_inquiry

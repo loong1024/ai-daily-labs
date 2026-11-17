@@ -1,0 +1,51 @@
+{
+  "docs": [
+    {
+      "id": "D1",
+      "text": "网络请求一般超时重试指南：建议等待 3 秒后刷新页面或检查无线网卡信号。",
+      "sem_group": "timeout"
+    },
+    {
+      "id": "D2",
+      "text": "故障码 ERR-4091-LOCK 排障手册：分布式事务死锁触发保护，需执行 unlock_tx --force 释放锁。",
+      "sem_group": "timeout"
+    },
+    {
+      "id": "D3",
+      "text": "工业网关常见供电说明：支持标准 24V 直流电源适配器供电。",
+      "sem_group": "hardware"
+    },
+    {
+      "id": "D4",
+      "text": "型号 HX-920B 边缘网关固件刷机规范：必须按住 RST 键 5 秒进入安全引导区。",
+      "sem_group": "hardware"
+    },
+    {
+      "id": "D5",
+      "text": "员工年假结转制度：当年未休完的法定年假可顺延至次年 3 月 31 日前使用。",
+      "sem_group": "hr"
+    },
+    {
+      "id": "D6",
+      "text": "病假工资核算办法：需提供三甲医院开具的休假证明单。",
+      "sem_group": "hr"
+    }
+  ],
+  "queries": [
+    {
+      "q": "报错 ERR-4091-LOCK 怎么处理",
+      "sem_group": "timeout",
+      "gold": "D2"
+    },
+    {
+      "q": "HX-920B 网关怎么进刷机模式",
+      "sem_group": "hardware",
+      "gold": "D4"
+    },
+    {
+      "q": "去年没休完的带薪休假能留到明年春天吗",
+      "sem_group": "hr",
+      "gold": "D5"
+    }
+  ]
+}

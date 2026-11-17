@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>个人专注番茄钟 · Vibe Pomodoro</title>
+  <style>
+    :root {
+      --bg-page: #f6f1e7;
+      --bg-card: #fffdf8;
+      --bg-subtle: #efe8da;
+      --bg-banner: #e6f4ea;
+      --text-banner: #1e5631;
+      --border-banner: #b7dfc2;
+      --text-main: #2d2924;
+      --text-muted: #6e655a;
+      --border-soft: #e4dbc9;
+      --accent: #c85a32;
+      --accent-hover: #b04b25;
+      --accent-contrast: #ffffff;
+      --progress-track: #eadfcd;
+      --shadow-card: 0 18px 42px rgba(72, 56, 34, 0.08);
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #181a1b;
+      --bg-card: #222629;
+      --bg-subtle: #2d3236;
+      --bg-banner: #1f3528;
+      --text-banner: #b8e6c8;
+      --border-banner: #355e45;
+      --text-main: #ece6dc;
+      --text-muted: #a69e92;
+      --border-soft: #383e42;
+      --accent: #e07a5f;
+      --accent-hover: #ec8d74;
+      --accent-contrast: #181a1b;
+      --progress-track: #32383c;
+      --shadow-card: 0 20px 46px rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .pomodoro-card {
+      width: 100%;
+      max-width: 560px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 24px;
+      padding: 28px 28px 24px;
+      box-shadow: var(--shadow-card);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .theme-btn {
+      border: 1px solid var(--border-soft);
+      background-color: var(--bg-subtle);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s ease, background-color 0.2s ease;
+    }
+
+    .theme-btn:hover {
+      opacity: 0.9;
+    }
+
+    .reminder-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background-color: var(--bg-banner);
+      color: var(--text-banner);
+      border: 1px solid var(--border-banner);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .reminder-banner.visible {
+      display: flex;
+    }
+
+    .banner-close {
+      background: transparent;
+      border: none;
+      color: var(--text-banner);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+
+    .goal-section {
+      margin-bottom: 18px;
+    }
+
+    .goal-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      background-color: var(--bg-subtle);
+      color: var(--text-main);
+      font-size: 0.96rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .goal-input:focus {
+      border-color: var(--accent);
+    }
+
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .chip-btn {
+      border: 1px solid var(--border-soft);
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .chip-btn:hover {
+      color: var(--text-main);
+      border-color: var(--accent);
+    }
+
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background-color: var(--bg-subtle);
+      padding: 6px;
+      border-radius: 16px;
+      margin-bottom: 22px;
+    }
+
+    .mode-tab {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 9px 6px;
+      border-radius: 11px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .mode-tab.active {
+      background-color: var(--bg-card);
+      color: var(--accent);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .timer-stage {
+      text-align: center;
+      padding: 10px 0 18px;
+    }
+
+    .mode-caption {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .timer-digits {
+      font-size: 4.8rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: 0.03em;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 16px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: var(--progress-track);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 100%;
+      background-color: var(--accent);
+      transition: width 0.35s linear;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .primary-btn {
+      min-width: 168px;
+      padding: 13px 26px;
+      border: none;
+      border-radius: 14px;
+      background-color: var(--accent);
+      color: var(--accent-contrast);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .primary-btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .secondary-btn {
+      padding: 13px 20px;
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      background-color: var(--bg-subtle);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .footer-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 0.88rem;
+    }
+
+    .round-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--bg-subtle);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .round-number {
+      color: var(--accent);
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .mini-btn {
+      border: 1px solid var(--border-soft);
+      background: transparent;
+      color: var(--text-muted);
+      padding: 5px 11px;
+      border-radius: 9px;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .mini-btn:hover {
+      color: var(--text-main);
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 520px) {
+      .mode-tabs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .timer-digits {
+        font-size: 3.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="pomodoro-card">
+    <header class="top-bar">
+      <h1 class="brand-title">🍅 个人专注番茄钟</h1>
+      <button type="button" class="theme-btn" id="theme-toggle-btn">🌙 深色护眼模式</button>
+    </header>
+
+    <div class="reminder-banner" id="reminder-banner" role="status" aria-live="polite">
+      <span id="reminder-text">🌿 本轮专注已完成！已完成专注轮数 +1，起身喝口水、远眺休息一下吧～</span>
+      <button type="button" class="banner-close" id="close-banner-btn" aria-label="关闭提醒">✕</button>
+    </div>
+
+    <section class="goal-section" aria-label="今日单点专注目标">
+      <input
+        type="text"
+        id="goal-input"
+        class="goal-input"
+        placeholder="【写下此刻最想推进的一件小事】"
+        maxlength="80"
+      />
+      <div class="preset-chips">
+        <button type="button" class="chip-btn" data-goal="写完本周项目周报的 3 条核心结论">📌 写完周报结论</button>
+        <button type="button" class="chip-btn" data-goal="精读完今日《AI 日课》并记下 1 条行动启发">📖 精读一节 AI 日课</button>
+        <button type="button" class="chip-btn" data-goal="清理收件箱积压的 8 封待回邮件">✉️ 清理待回邮件</button>
+      </div>
+    </section>
+
+    <nav class="mode-tabs" aria-label="计时模式切换">
+      <button type="button" class="mode-tab active" data-mode="focus" data-seconds="1500">专注 25 分钟</button>
+      <button type="button" class="mode-tab" data-mode="short_break" data-seconds="300">短休 5 分钟</button>
+      <button type="button" class="mode-tab" data-mode="long_break" data-seconds="900">长休 15 分钟</button>
+      <button type="button" class="mode-tab" data-mode="quick_demo" data-seconds="10">⚡ 10 秒极速演示</button>
+    </nav>
+
+    <section class="timer-stage">
+      <p class="mode-caption" id="status-caption">当前模式：专注 25 分钟 · 准备就绪</p>
+      <div class="timer-digits" id="timer-display">25:00</div>
+      <div class="progress-bar" aria-hidden="true">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="action-row">
+        <button type="button" class="primary-btn" id="toggle-btn">开始 / 暂停</button>
+        <button type="button" class="secondary-btn" id="reset-btn">重置当前计时</button>
+      </div>
+    </section>
+
+    <footer class="footer-bar">
+      <div class="round-badge">
+        <span>今日已完成专注轮数：</span>
+        <strong class="round-number" id="round-count">0</strong>
+        <span>轮</span>
+      </div>
+      <div class="footer-actions">
+        <button type="button" class="mini-btn" id="clear-rounds-btn">清零计数</button>
+        <button type="button" class="mini-btn" id="export-log-btn">导出专注记录</button>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      const MODES = {
+        focus: { label: "专注 25 分钟", seconds: 1500, countsFocus: true },
+        short_break: { label: "短休 5 分钟", seconds: 300, countsFocus: false },
+        long_break: { label: "长休 15 分钟", seconds: 900, countsFocus: false },
+        quick_demo: { label: "10 秒极速演示", seconds: 10, countsFocus: true }
+      };
+
+      const STORAGE_ROUNDS_KEY = "vibe_pomodoro_completed_rounds";
+      const STORAGE_THEME_KEY = "vibe_pomodoro_theme";
+
+      let currentMode = "focus";
+      let totalSeconds = MODES.focus.seconds;
+      let remainingSeconds = totalSeconds;
+      let timerId = null;
+      let isRunning = false;
+      let completedRounds = 0;
+      const focusHistory = [];
+
+      const htmlEl = document.documentElement;
+      const timerDisplay = document.getElementById("timer-display");
+      const statusCaption = document.getElementById("status-caption");
+      const progressFill = document.getElementById("progress-fill");
+      const toggleBtn = document.getElementById("toggle-btn");
+      const resetBtn = document.getElementById("reset-btn");
+      const roundCountEl = document.getElementById("round-count");
+      const clearRoundsBtn = document.getElementById("clear-rounds-btn");
+      const exportLogBtn = document.getElementById("export-log-btn");
+      const themeToggleBtn = document.getElementById("theme-toggle-btn");
+      const reminderBanner = document.getElementById("reminder-banner");
+      const reminderText = document.getElementById("reminder-text");
+      const closeBannerBtn = document.getElementById("close-banner-btn");
+      const goalInput = document.getElementById("goal-input");
+      const modeTabs = Array.from(document.querySelectorAll(".mode-tab"));
+      const presetChips = Array.from(document.querySelectorAll(".chip-btn"));
+
+      function safeReadStorage(key, fallback) {
+        try {
+          const val = window.localStorage.getItem(key);
+          return val !== null ? val : fallback;
+        } catch (_err) {
+          return fallback;
+        }
+      }
+
+      function safeWriteStorage(key, value) {
+        try {
+          window.localStorage.setItem(key, String(value));
+        } catch (_err) {
+          // 忽略无痕窗口存储限制
+        }
+      }
+
+      function formatTime(sec) {
+        const safeSec = Math.max(0, sec);
+        const mins = Math.floor(safeSec / 60);
+        const secs = safeSec % 60;
+        return String(mins).padStart(2, "0") + ":" + String(secs).padStart(2, "0");
+      }
+
+      function renderTimer() {
+        timerDisplay.textContent = formatTime(remainingSeconds);
+        const pct = totalSeconds > 0 ? (remainingSeconds / totalSeconds) * 100 : 0;
+        progressFill.style.width = pct.toFixed(2) + "%";
+        roundCountEl.textContent = String(completedRounds);
+      }
+
+      function stopInterval() {
+        if (timerId !== null) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+        isRunning = false;
+      }
+
+      function handleTimerComplete() {
+        stopInterval();
+        toggleBtn.textContent = "开始 / 暂停";
+        const cfg = MODES[currentMode];
+        const goalText = (goalInput.value || "").trim() || "未填写单点目标";
+
+        if (cfg.countsFocus) {
+          completedRounds += 1;
+          safeWriteStorage(STORAGE_ROUNDS_KEY, completedRounds);
+          focusHistory.push({
+            finishedAt: new Date().toLocaleString("zh-CN", { hour12: false }),
+            mode: cfg.label,
+            seconds: cfg.seconds,
+            goal: goalText
+          });
+          reminderText.textContent =
+            "🌿 本轮「" + cfg.label + "」已完成！今日专注轮数 +1（累计 " +
+            completedRounds + " 轮），起身远眺休息一下吧～";
+        } else {
+          reminderText.textContent = "☀️ 休息计时结束！精神充沛的话，准备开启下一轮专注吧。";
+        }
+
+        reminderBanner.classList.add("visible");
+        statusCaption.textContent = "当前模式：" + cfg.label + " · 已完成";
+        renderTimer();
+      }
+
+      function toggleTimer() {
+        if (isRunning) {
+          stopInterval();
+          toggleBtn.textContent = "继续专注（已暂停）";
+          statusCaption.textContent = "当前模式：" + MODES[currentMode].label + " · 已暂停";
+          return;
+        }
+
+        if (remainingSeconds <= 0) {
+          remainingSeconds = totalSeconds;
+        }
+        reminderBanner.classList.remove("visible");
+        isRunning = true;
+        toggleBtn.textContent = "暂停计时";
+        statusCaption.textContent = "当前模式：" + MODES[currentMode].label + " · 专注进行中";
+
+        timerId = setInterval(function () {
+          remainingSeconds -= 1;
+          renderTimer();
+          if (remainingSeconds <= 0) {
+            handleTimerComplete();
+          }
+        }, 1000);
+      }
+
+      function resetTimer() {
+        stopInterval();
+        remainingSeconds = totalSeconds;
+        toggleBtn.textContent = "开始 / 暂停";
+        statusCaption.textContent = "当前模式：" + MODES[currentMode].label + " · 准备就绪";
+        renderTimer();
+      }
+
+      function switchMode(modeKey) {
+        if (!MODES[modeKey]) {
+          return;
+        }
+        stopInterval();
+        currentMode = modeKey;
+        totalSeconds = MODES[modeKey].seconds;
+        remainingSeconds = totalSeconds;
+        modeTabs.forEach(function (btn) {
+          btn.classList.toggle("active", btn.getAttribute("data-mode") === modeKey);
+        });
+        toggleBtn.textContent = "开始 / 暂停";
+        statusCaption.textContent = "当前模式：" + MODES[modeKey].label + " · 准备就绪";
+        renderTimer();
+      }
+
+      function applyTheme(theme) {
+        const nextTheme = theme === "dark" ? "dark" : "light";
+        htmlEl.setAttribute("data-theme", nextTheme);
+        themeToggleBtn.textContent = nextTheme === "dark" ? "☀️ 浅米护眼模式" : "🌙 深色护眼模式";
+        safeWriteStorage(STORAGE_THEME_KEY, nextTheme);
+      }
+
+      function exportFocusLog() {
+        const currentGoal = (goalInput.value || "").trim() || "暂未输入今日单点目标";
+        const lines = [
+          "# 个人专注番茄钟 · 今日专注复盘记录",
+          "",
+          "- 导出时间：" + new Date().toLocaleString("zh-CN", { hour12: false }),
+          "- 当前单点目标：" + currentGoal,
+          "- 今日累计完成专注轮数：" + completedRounds + " 轮",
+          "",
+          "## 本次会话完成明细"
+        ];
+
+        if (focusHistory.length === 0) {
+          lines.push("- 暂无归零明细记录（可点击「10 秒极速演示」跑通一轮后再次导出查看）。");
+        } else {
+          focusHistory.forEach(function (item, idx) {
+            lines.push(
+              (idx + 1) + ". [" + item.finishedAt + "] " + item.mode + " | 目标：" + item.goal
+            );
+          });
+        }
+
+        const blob = new Blob([lines.join("\n")], { type: "text/markdown;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = "focus-pomodoro-log.md";
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        URL.revokeObjectURL(url);
+      }
+
+      // 初始化持久化数据与事件监听
+      completedRounds = parseInt(safeReadStorage(STORAGE_ROUNDS_KEY, "0"), 10) || 0;
+      applyTheme(safeReadStorage(STORAGE_THEME_KEY, "light"));
+      renderTimer();
+
+      toggleBtn.addEventListener("click", toggleTimer);
+      resetBtn.addEventListener("click", resetTimer);
+
+      modeTabs.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          switchMode(btn.getAttribute("data-mode"));
+        });
+      });
+
+      presetChips.forEach(function (chip) {
+        chip.addEventListener("click", function () {
+          goalInput.value = chip.getAttribute("data-goal") || "";
+          goalInput.focus();
+        });
+      });
+
+      clearRoundsBtn.addEventListener("click", function () {
+        completedRounds = 0;
+        safeWriteStorage(STORAGE_ROUNDS_KEY, 0);
+        reminderBanner.classList.remove("visible");
+        renderTimer();
+      });
+
+      closeBannerBtn.addEventListener("click", function () {
+        reminderBanner.classList.remove("visible");
+      });
+
+      themeToggleBtn.addEventListener("click", function () {
+        const cur = htmlEl.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        applyTheme(cur);
+      });
+
+      exportLogBtn.addEventListener("click", exportFocusLog);
+    })();
+  </script>
+</body>
+</html>

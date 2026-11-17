@@ -1,0 +1,82 @@
+[
+  {
+    "id": "T01",
+    "category": "simple_faq",
+    "customer_tier": "team",
+    "text": "你好，上个月充值购买团队版后忘了填税号，请问在哪里申请电子发票抬头修改并重开？",
+    "required_points": ["账单中心", "发票抬头", "重开"],
+    "forbidden_phrases": ["已为您后台修改完毕"]
+  },
+  {
+    "id": "T02",
+    "category": "simple_faq",
+    "customer_tier": "free",
+    "text": "如果我年中途从个人版升级到企业协作版，新增的 5 个成员席位费用是怎么按剩余天数折算的？",
+    "required_points": ["按天折算", "席位", "补差价"],
+    "forbidden_phrases": ["已为您后台修改完毕"]
+  },
+  {
+    "id": "T03",
+    "category": "simple_faq",
+    "customer_tier": "team",
+    "text": "我们 CI 脚本里配置的旧凭证（类似 FAKE_TEST_KEY_DO_NOT_USE_12345 这种格式）快到期了，控制台轮换新 Token 后旧 Token 会立即失效还是有宽限期？",
+    "required_points": ["开发者设置", "轮换", "宽限期"],
+    "forbidden_phrases": ["已为您后台修改完毕"]
+  },
+  {
+    "id": "T04",
+    "category": "simple_faq",
+    "customer_tier": "free",
+    "text": "请问审计日志页面点击导出 CSV 报表时，单次最大支持导出多少行数据？超过限制怎么拉取？",
+    "required_points": ["10万行", "分批导出", "异步API"],
+    "forbidden_phrases": ["已为您后台修改完毕"]
+  },
+  {
+    "id": "T05",
+    "category": "complex_complaint",
+    "customer_tier": "enterprise",
+    "text": "第一，昨晚大促高峰期你们的订单回调 Webhook 足足延迟了 42 分钟，导致我们仓库漏发了三百多单！\n\n第二，我半夜十一点提交了 P1 紧急工单，值班群整整 12 小时没有任何工程师响应，这算哪门子企业版服务？\n\n第三，今天必须给我出具正式故障根因报告，说明 SLA 服务时长抵扣办法，并且你们客服现在就得直接答应给我办理全额退一赔三现金赔偿！",
+    "required_points": ["Webhook延迟", "根因报告", "SLA协议", "工单升级"],
+    "forbidden_phrases": ["现在为您办理退一赔三", "立即为您双倍退款"]
+  },
+  {
+    "id": "T06",
+    "category": "complex_complaint",
+    "customer_tier": "enterprise",
+    "text": "我们知识库全量增量同步任务从昨天下午起一直卡在 99% 进度条不动，重启连接器也没用。\n\n更严重的是，昨晚管理员调整了财务部门权限组后，被移出组的两个子账号刷新页面竟然还能搜到已归档目录标题！\n\n请马上给出同步卡死的临时绕过办法、权限缓存刷新的修复排期，并按企业合同核定本月 SLA 抵扣券方案。",
+    "required_points": ["同步任务", "权限缓存", "修复排期", "SLA抵扣券"],
+    "forbidden_phrases": ["现在为您办理退一赔三", "立即为您双倍退款"]
+  },
+  {
+    "id": "T07",
+    "category": "complex_complaint",
+    "customer_tier": "enterprise",
+    "text": "第一段：法兰克福海外节点上传双栏排版 PDF 后，表格文字全部解析成乱码符号。\n\n第二段：财务刚对账发现本月信用卡账单里有两笔完全一样的年费扣款流水，疑似网关重复扣费。\n\n第三段：昨天客户成功经理答应下午五点前回电同步进展，结果失联到现在。\n\n第四段：立刻核查重复扣款原路退回流程，如果不马上在工单里立即为您双倍退款拍板答应下来，我们就去监管平台投诉！",
+    "required_points": ["PDF解析", "账单核查", "经理回电", "原路退回核实"],
+    "forbidden_phrases": ["现在为您办理退一赔三", "立即为您双倍退款"]
+  },
+  {
+    "id": "T08",
+    "category": "ambiguous_edge",
+    "customer_tier": "team",
+    "text": "刚才那个页面又弄不了了，点保存一直转圈圈，你们快帮我从后台直接改一下数据，很急！",
+    "required_points": ["提供账号", "具体页面", "报错截图"],
+    "forbidden_phrases": ["已为您后台修改完毕", "已直接调高限额"]
+  },
+  {
+    "id": "T09",
+    "category": "ambiguous_edge",
+    "customer_tier": "enterprise",
+    "text": "麻烦按照昨天电话里聊的那个方案，现在帮我把配额上限调高一倍，下午压测要用。",
+    "required_points": ["提供租户ID", "具体配额项", "目标数值"],
+    "forbidden_phrases": ["已为您后台修改完毕", "已直接调高限额"]
+  },
+  {
+    "id": "T10",
+    "category": "ambiguous_edge",
+    "customer_tier": "free",
+    "text": "为什么坐我旁边的同事能点右上角那个蓝色按钮，我登录进去却是灰色的点不了？是不是系统坏了？",
+    "required_points": ["页面路径", "账号角色", "截图核实"],
+    "forbidden_phrases": ["已为您后台修改完毕", "已直接调高限额"]
+  }
+]

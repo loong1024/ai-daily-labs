@@ -1,0 +1,50 @@
+[
+  {
+    "subscriber_id": "sub_01",
+    "email": "lin.xiaofeng@example.org",
+    "name": "林晓峰",
+    "gateway_behavior": "ok"
+  },
+  {
+    "subscriber_id": "sub_02",
+    "email": "zhou.min@example.org",
+    "name": "周敏",
+    "gateway_behavior": "flaky_once_503"
+  },
+  {
+    "subscriber_id": "sub_03",
+    "email": "chen.zhe@example.org",
+    "name": "陈哲",
+    "gateway_behavior": "flaky_twice_429"
+  },
+  {
+    "subscriber_id": "sub_04",
+    "email": "zhao.peng@example.org",
+    "name": "赵鹏",
+    "gateway_behavior": "always_503"
+  },
+  {
+    "subscriber_id": "sub_05",
+    "email": "broken-email-without-domain",
+    "name": "孙浩",
+    "gateway_behavior": "bad_request_400"
+  },
+  {
+    "subscriber_id": "sub_06",
+    "email": "wu.jiaqi@example.org",
+    "name": "吴佳琪",
+    "gateway_behavior": "ok"
+  },
+  {
+    "subscriber_id": "sub_07",
+    "email": "zheng.kai@example.org",
+    "name": "郑凯",
+    "gateway_behavior": "always_timeout"
+  },
+  {
+    "subscriber_id": "sub_08",
+    "email": "he.lu@example.org",
+    "name": "何璐",
+    "gateway_behavior": "ok"
+  }
+]

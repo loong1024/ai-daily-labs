@@ -1,0 +1,60 @@
+{
+  "models": {
+    "small": {
+      "name": "mini-fast-v1",
+      "input_cost_per_1k": 0.0002,
+      "output_cost_per_1k": 0.0006,
+      "simulated_latency_ms": 120
+    },
+    "large": {
+      "name": "flagship-pro-v2",
+      "input_cost_per_1k": 0.005,
+      "output_cost_per_1k": 0.015,
+      "simulated_latency_ms": 620
+    },
+    "fallback": {
+      "name": "backup-reliable-v2",
+      "input_cost_per_1k": 0.003,
+      "output_cost_per_1k": 0.009,
+      "simulated_latency_ms": 410
+    }
+  },
+  "tasks": {
+    "intent_classify": {
+      "tier": "small",
+      "cacheable": true,
+      "critical": false
+    },
+    "tag_extract": {
+      "tier": "small",
+      "cacheable": true,
+      "critical": false
+    },
+    "doc_summary": {
+      "tier": "large",
+      "cacheable": true,
+      "critical": false
+    },
+    "contract_audit": {
+      "tier": "large",
+      "cacheable": true,
+      "critical": true
+    },
+    "live_order_status": {
+      "tier": "large",
+      "cacheable": false,
+      "critical": true
+    }
+  },
+  "reliability": {
+    "timeout_ms": 1500,
+    "max_retries": 2,
+    "base_backoff_sec": 0.002,
+    "circuit_failure_threshold": 3,
+    "circuit_cooldown_sec": 30.0
+  },
+  "budget": {
+    "soft_limit_usd": 0.08,
+    "hard_limit_usd": 0.15
+  }
+}

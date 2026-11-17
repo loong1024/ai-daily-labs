@@ -1,0 +1,119 @@
+[
+  {
+    "case_id": "C01_pronoun_followup",
+    "description": "多轮指代追问（需从历史对话还原 UpstreamPool 主语）",
+    "today": "2026-11-16",
+    "chat_history": [
+      {
+        "role": "user",
+        "content": "网关里的 UpstreamPool 组件主要负责什么？"
+      },
+      {
+        "role": "assistant",
+        "content": "UpstreamPool 负责后端实例连接池维护、最大空闲连接管理与主动健康探活。"
+      }
+    ],
+    "query": "那它的超时怎么配？",
+    "expected": {
+      "need_retrieval": true,
+      "must_mention_subject": "UpstreamPool",
+      "exact_terms": [],
+      "min_sub_queries": 1,
+      "time_filter": null,
+      "expected_doc_ids": ["DOC-GW-101"]
+    }
+  },
+  {
+    "case_id": "C02_exact_error_code",
+    "description": "含大小写下划线报错码与函数名（需原样抽取并走精确检索路）",
+    "today": "2026-11-16",
+    "chat_history": [
+      {
+        "role": "user",
+        "content": "我们刚把回调网关灰度到了测试集群。"
+      },
+      {
+        "role": "assistant",
+        "content": "好的，灰度压测期间有观察到异常状态码吗？"
+      }
+    ],
+    "query": "压测时偶发报 ERR_502_TIMEOUT，日志提示 check_keepalive_idle 失败，怎么排查？",
+    "expected": {
+      "need_retrieval": true,
+      "must_mention_subject": null,
+      "exact_terms": ["ERR_502_TIMEOUT", "check_keepalive_idle"],
+      "min_sub_queries": 1,
+      "time_filter": null,
+      "expected_doc_ids": ["DOC-ERR-502"]
+    }
+  },
+  {
+    "case_id": "C03_year_comparison",
+    "description": "跨年份架构对比（需拆分为 2025 与 2026 两条子查询并生成两年时间过滤）",
+    "today": "2026-11-16",
+    "chat_history": [
+      {
+        "role": "user",
+        "content": "我正在准备网关安全架构复盘材料。"
+      },
+      {
+        "role": "assistant",
+        "content": "没问题，需要梳理哪一块的演进细节？"
+      }
+    ],
+    "query": "对比去年和今年的网关鉴权限流方案有哪些核心变化？",
+    "expected": {
+      "need_retrieval": true,
+      "must_mention_subject": null,
+      "exact_terms": [],
+      "min_sub_queries": 2,
+      "time_filter": {
+        "after": "2025-01-01",
+        "before": "2026-12-31"
+      },
+      "expected_doc_ids": ["DOC-AUTH-2025", "DOC-AUTH-2026"]
+    }
+  },
+  {
+    "case_id": "C04_recent_single_hop",
+    "description": "单跳时效查询（需将“今年最新”映射为 2026 年度结构化时间过滤，拦截 2024 旧归档）",
+    "today": "2026-11-16",
+    "chat_history": [],
+    "query": "今年最新发布的向量索引分片扩容规范是什么？",
+    "expected": {
+      "need_retrieval": true,
+      "must_mention_subject": null,
+      "exact_terms": [],
+      "min_sub_queries": 1,
+      "time_filter": {
+        "after": "2026-01-01",
+        "before": "2026-12-31"
+      },
+      "expected_doc_ids": ["DOC-VEC-2026"]
+    }
+  },
+  {
+    "case_id": "C05_chitchat_skip",
+    "description": "闲聊致谢与纯上文翻译指令（应直接跳过检索，避免浪费与噪声注入）",
+    "today": "2026-11-16",
+    "chat_history": [
+      {
+        "role": "user",
+        "content": "UpstreamPool 默认连接超时是多少？"
+      },
+      {
+        "role": "assistant",
+        "content": "默认 connect_timeout_ms 为 3000ms。"
+      }
+    ],
+    "query": "你好，非常清楚了，谢谢！先把上面那句话翻成英文就行。",
+    "expected": {
+      "need_retrieval": false,
+      "must_mention_subject": null,
+      "exact_terms": [],
+      "min_sub_queries": 0,
+      "time_filter": null,
+      "expected_doc_ids": []
+    }
+  }
+]

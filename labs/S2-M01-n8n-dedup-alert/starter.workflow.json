@@ -1,0 +1,111 @@
+[
+  {
+    "id": "rss-daily-digest-main",
+    "name": "AI Daily RSS Digest (Starter Baseline)",
+    "active": false,
+    "settings": {
+      "executionOrder": "v1",
+      "timezone": "UTC",
+      "errorWorkflow": ""
+    },
+    "nodes": [
+      {
+        "id": "node-schedule-1",
+        "name": "Schedule Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [220, 300],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 8 * * *"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "node-rss-a",
+        "name": "RSS Read Feed A",
+        "type": "n8n-nodes-base.rssFeedRead",
+        "typeVersion": 1.1,
+        "position": [440, 220],
+        "parameters": {
+          "url": "https://hnrss.org/newest?q=AI"
+        }
+      },
+      {
+        "id": "node-rss-b",
+        "name": "RSS Read Feed B",
+        "type": "n8n-nodes-base.rssFeedRead",
+        "typeVersion": 1.1,
+        "position": [440, 380],
+        "parameters": {
+          "url": "https://changelog.com/feed"
+        }
+      },
+      {
+        "id": "node-llm-1",
+        "name": "LLM Structured Summary",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.4,
+        "continueOnFail": true,
+        "position": [700, 300],
+        "parameters": {
+          "model": "gpt-4o-mini",
+          "responseFormat": "text",
+          "systemPrompt": "请把输入的 RSS 文章总结一下。"
+        }
+      },
+      {
+        "id": "node-webhook-push",
+        "name": "Push Digest Webhook",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [960, 300],
+        "parameters": {
+          "method": "POST",
+          "url": "https://webhook.site/00000000-0000-0000-0000-000000000001"
+        }
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {"node": "RSS Read Feed A", "type": "main", "index": 0},
+            {"node": "RSS Read Feed B", "type": "main", "index": 0}
+          ]
+        ]
+      },
+      "RSS Read Feed A": {
+        "main": [
+          [{"node": "LLM Structured Summary", "type": "main", "index": 0}]
+        ]
+      },
+      "RSS Read Feed B": {
+        "main": [
+          [{"node": "LLM Structured Summary", "type": "main", "index": 0}]
+        ]
+      },
+      "LLM Structured Summary": {
+        "main": [
+          [{"node": "Push Digest Webhook", "type": "main", "index": 0}]
+        ]
+      }
+    }
+  },
+  {
+    "id": "rss-digest-error-alert",
+    "name": "RSS Digest Error Alert Workflow (TODO Stub)",
+    "active": false,
+    "settings": {
+      "executionOrder": "v1",
+      "timezone": "UTC"
+    },
+    "nodes": [],
+    "connections": {}
+  }
+]

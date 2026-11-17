@@ -1,0 +1,47 @@
+{
+  "default_task": "读取 notes/ 下本周的日记，统计一共运动了几次，若不足 5 次则向 todo.md 追加一条高优先级补训待办。",
+  "guardrail_constants": {
+    "max_steps": 8,
+    "max_chars_per_obs": 600,
+    "max_repeat_signature": 2
+  },
+  "scenarios": {
+    "none": {
+      "description": "正常多步执行：列举笔记 -> 依次读取两篇周记（长观察被截断至 <=600 字）-> 经人工确认向 todo.md 写入待办 -> 汇总输出。",
+      "expected_status": "completed",
+      "expected_workout_count": 4
+    },
+    "bad_args": {
+      "description": "模型首轮向 append_todo 传入非法 priority='SUPER_URGENT' 及多余字段 extra_flag；参数校验器拦截并回传可读纠错提示，模型次轮修正为 priority='high' 自愈完成。",
+      "faulty_call": {
+        "name": "append_todo",
+        "arguments": {
+          "item": "本周运动 4 次，下周补齐第 5 次有氧训练",
+          "priority": "SUPER_URGENT",
+          "extra_flag": true
+        }
+      },
+      "expected_status": "completed"
+    },
+    "tool_err": {
+      "description": "模型首轮盲猜读取不存在的 2026-W11-missing.md 触发 FileNotFoundError；执行器捕获异常转为错误观察回传，模型随后调用 list_notes 查清真实文件名并恢复。",
+      "faulty_call": {
+        "name": "read_note",
+        "arguments": {
+          "filename": "2026-W11-missing.md"
+        }
+      },
+      "expected_status": "completed"
+    },
+    "loop": {
+      "description": "模型陷入故障死循环，反复以完全相同的参数调用 list_notes({'keyword': '2026'})；宿主在检测到连续重复签名时立即熔断停机并输出已完成进展。",
+      "faulty_call": {
+        "name": "list_notes",
+        "arguments": {
+          "keyword": "2026"
+        }
+      },
+      "expected_status": "halted_guardrail"
+    }
+  }
+}

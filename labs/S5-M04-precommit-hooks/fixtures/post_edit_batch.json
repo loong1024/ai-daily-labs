@@ -1,0 +1,29 @@
+{
+  "noisy_lint_only_on_changed": {
+    "changed_files": ["src/client.py", "src/utils.py"],
+    "file_contents": {
+      "src/client.py": "import os\n\nAPI_KEY = os.environ.get('ORDER_API_KEY', '')\n",
+      "src/utils.py": "def clamp_non_negative(v: int) -> int:\n    return max(0, v)\n",
+      "legacy/old_messy.py": "# 未改动历史遗留文件（包含占位测试串，不应误报本次编辑！）\nAPI_SECRET = \"FAKE_TEST_KEY_DO_NOT_USE_12345\"\n"
+    },
+    "raw_linter_lines": [
+      "legacy/old_messy.py:2:1: E501 line too long (112 > 100)",
+      "legacy/old_messy.py:8:5: F401 'sys' imported but unused",
+      "src/client.py:1:1: I001 Import block is un-sorted or un-formatted",
+      "src/client.py:4:80: E501 line too long (105 > 100)",
+      "src/client.py:9:5: F841 Local variable 'resp_headers' is assigned to but never used",
+      "src/utils.py:3:1: W292 no newline at end of file",
+      "src/utils.py:7:12: E712 comparison to True should be 'if cond is True:'",
+      "src/utils.py:14:5: B006 Do not use mutable data structures for argument defaults",
+      "src/utils.py:19:1: E302 expected 2 blank lines, found 1",
+      "src/utils.py:25:9: SIM108 Use ternary operator instead of if-else-block"
+    ]
+  },
+  "secret_leaked_in_changed_file": {
+    "changed_files": ["src/client.py"],
+    "file_contents": {
+      "src/client.py": "API_SECRET = \"FAKE_TEST_KEY_DO_NOT_USE_12345\"\n"
+    },
+    "raw_linter_lines": []
+  }
+}

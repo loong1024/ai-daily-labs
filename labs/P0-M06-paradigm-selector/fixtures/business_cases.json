@@ -1,0 +1,85 @@
+{
+  "decision_ruler": [
+    {
+      "tier": "L1",
+      "name": "精调 Prompt（零基建）",
+      "rule": "单次上下文可装下全部背景，无外部系统读写需求"
+    },
+    {
+      "tier": "L2",
+      "name": "外挂知识库 RAG（补私有记忆）",
+      "rule": "依赖海量或高频更新的内部专有文档，要求溯源防幻觉"
+    },
+    {
+      "tier": "L3",
+      "name": "编排工作流 Workflow（固化标准工序）",
+      "rule": "多步工序顺序与规则固定，追求高确定性与低波动"
+    },
+    {
+      "tier": "L4",
+      "name": "自主 Agent + MCP 协议（动态规划加标准手脚）",
+      "rule": "路径无法预先写死，需模型根据外部工具返回结果动态决策下一步"
+    }
+  ],
+  "cases": [
+    {
+      "id": "A",
+      "scenario": "将八百字发版说明改写为三版社群通知（面向客户群、合作伙伴群与内部销售群）",
+      "naive_proposal_trap": "市场部提议立项搭建多智能体协作系统（拆分为策划 Agent、撰稿 Agent、毒舌主编 Agent 三轮博弈）",
+      "expected_tier": "L1",
+      "accepted_tier_tokens": ["L1", "精调 Prompt", "纯 Prompt"],
+      "forbidden_tier_tokens_in_choice": ["L2", "L3", "L4", "RAG", "Workflow", "工作流", "Agent"]
+    },
+    {
+      "id": "B",
+      "scenario": "依据三百份历史合同与法务合规手册，准确解答一线销售日常合规疑问并附条款出处",
+      "naive_proposal_trap": "法务助理试图把 300 份合同摘抄塞进超长系统提示词，每次全量发送给大模型硬答",
+      "expected_tier": "L2",
+      "accepted_tier_tokens": ["L2", "RAG", "知识库"],
+      "forbidden_tier_tokens_in_choice": ["L1", "L3", "L4", "Workflow", "工作流", "Agent"]
+    },
+    {
+      "id": "C",
+      "scenario": "每当收到新增海外售后工单，按固定五类标签提取结构化字段、翻译为中文并写入在线汇总表",
+      "naive_proposal_trap": "客服技术组打算直接上完全自主规划的 ReAct Agent，把工单接口和表格删除/修改权限全开放给模型自由发挥",
+      "expected_tier": "L3",
+      "accepted_tier_tokens": ["L3", "Workflow", "工作流"],
+      "forbidden_tier_tokens_in_choice": ["L1", "L2", "L4", "RAG", "Agent"]
+    },
+    {
+      "id": "D",
+      "scenario": "按高管一句模糊出差意图（“下周找两天去趟华东拜访两家客户，避开周三董事会”），自主查日历空闲、检索高铁航班班次并汇总两套无冲突备选行程草案",
+      "naive_proposal_trap": "行政团队想用死板的线性固定工作流写死所有日程冲突、余票售罄与跨城衔接分支",
+      "expected_tier": "L4",
+      "accepted_tier_tokens": ["L4", "Agent"],
+      "forbidden_tier_tokens_in_choice": ["L1", "L2", "L3", "精调 Prompt", "纯工作流"]
+    }
+  ],
+  "mcp_catalog_snapshot": [
+    {
+      "category": "本地文件系统与代码仓库",
+      "examples": ["Filesystem MCP Server", "Git / GitHub MCP Server"],
+      "capability": "受控读写本地目录文档、检索代码变更记录与提交分支"
+    },
+    {
+      "category": "关系型数据库与数据仓库",
+      "examples": ["PostgreSQL MCP Server", "SQLite / BigQuery MCP Server"],
+      "capability": "查询表结构 Schema 并在只读权限下执行受控 SQL 数据探查"
+    },
+    {
+      "category": "日历日程与团队协作办公",
+      "examples": ["Google Calendar MCP Server", "Slack / Notion / 飞书消息文档连接器"],
+      "capability": "读取忙闲日历档期、检索团队协作空间纪要或起草日程草案"
+    },
+    {
+      "category": "网页检索与浏览器自动化",
+      "examples": ["Brave Search / Fetch MCP Server", "Playwright Browser MCP Server"],
+      "capability": "实时检索外部公开网页资讯、抓取班次票务页面与受控交互"
+    },
+    {
+      "category": "研发工单与线上监控告警",
+      "examples": ["Linear / Jira MCP Server", "Sentry 异常追踪连接器"],
+      "capability": "按报错堆栈反查关联线上工单与最近发布变更"
+    }
+  ]
+}

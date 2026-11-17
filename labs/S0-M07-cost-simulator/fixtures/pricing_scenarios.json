@@ -1,0 +1,78 @@
+{
+  "models": [
+    {
+      "name": "pro_reasoning_model",
+      "input_per_1m": 2.0,
+      "cached_input_per_1m": 0.2,
+      "output_per_1m": 8.0,
+      "cache_min_prefix_tokens": 1024,
+      "batch_discount_factor": 0.5,
+      "stack_batch_on_cache": false
+    },
+    {
+      "name": "economy_flash_model",
+      "input_per_1m": 0.2,
+      "cached_input_per_1m": 0.02,
+      "output_per_1m": 0.8,
+      "cache_min_prefix_tokens": 1024,
+      "batch_discount_factor": 0.5,
+      "stack_batch_on_cache": true
+    }
+  ],
+  "workloads": [
+    {
+      "scenario_id": "under_threshold_800",
+      "description": "2000条反馈·固定前缀800 token（低于1024缓存门槛）·冗长输出300 token",
+      "task_count": 2000,
+      "prefix_tokens": 800,
+      "variable_input_tokens": 250,
+      "output_tokens": 300,
+      "compact_output_ratio": 0.5
+    },
+    {
+      "scenario_id": "cached_verbose_1200",
+      "description": "2000条反馈·固定前缀1200 token（跨过1024门槛触发缓存）·冗长输出300 token",
+      "task_count": 2000,
+      "prefix_tokens": 1200,
+      "variable_input_tokens": 250,
+      "output_tokens": 300,
+      "compact_output_ratio": 0.5
+    },
+    {
+      "scenario_id": "cached_compact_80",
+      "description": "2000条反馈·固定前缀1200 token + 精简纯JSON输出80 token（关闭冗余解释与思考）",
+      "task_count": 2000,
+      "prefix_tokens": 1200,
+      "variable_input_tokens": 250,
+      "output_tokens": 80,
+      "compact_output_ratio": 0.5
+    },
+    {
+      "scenario_id": "just_below_boundary_1023",
+      "description": "边界陷阱：固定前缀1023 token（差1个token未达1024门槛，不应享受缓存折扣）",
+      "task_count": 2000,
+      "prefix_tokens": 1023,
+      "variable_input_tokens": 200,
+      "output_tokens": 120,
+      "compact_output_ratio": 0.5
+    },
+    {
+      "scenario_id": "exact_boundary_1024",
+      "description": "边界触发：固定前缀恰好1024 token（达到 >=1024 门槛，正式触发缓存折扣）",
+      "task_count": 2000,
+      "prefix_tokens": 1024,
+      "variable_input_tokens": 200,
+      "output_tokens": 120,
+      "compact_output_ratio": 0.5
+    },
+    {
+      "scenario_id": "long_report_chunking",
+      "description": "500份长报告精读抽表·固定Schema与样例前缀4096 token·单块正文1200 token",
+      "task_count": 500,
+      "prefix_tokens": 4096,
+      "variable_input_tokens": 1200,
+      "output_tokens": 400,
+      "compact_output_ratio": 0.5
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[project]
+name = "ai-daily-labs"
+version = "1.0.0"
+description = "AI 日课配套 66 个动手实验单仓（支持 Vibe Coding 一键导入与红绿闭环验收）"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+live = [
+  "markitdown>=0.0.1",
+  "tiktoken>=0.7.0",
+  "litellm>=1.50.0",
+]

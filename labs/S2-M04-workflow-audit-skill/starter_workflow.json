@@ -1,0 +1,65 @@
+{
+  "workflow_name": "vip-incident-compensation-mailer",
+  "purpose": "接收工单系统告警 Webhook，调用 LLM 生成致歉信与补偿方案，向受影响企业客户群发补偿邮件并发放代金券（不可逆外部动作）。",
+  "triggers": [
+    {
+      "id": "trig_webhook_01",
+      "type": "webhook",
+      "path": "/hooks/incident-closed",
+      "filter": "*",
+      "deduplicate_by_event_id": false,
+      "writeback_updates_source_ticket": true
+    },
+    {
+      "id": "trig_cron_02",
+      "type": "schedule",
+      "cron": "0 9 * * 1",
+      "timezone": ""
+    }
+  ],
+  "data_flow": {
+    "pagination": false,
+    "null_handling": "implicit",
+    "malformed_record_policy": "silent_drop"
+  },
+  "nodes": [
+    {
+      "id": "node_llm_draft",
+      "type": "llm_completion",
+      "model": "gpt-4o-mini",
+      "structured_output": false,
+      "fallback_category": null,
+      "validation_max_retries": 0
+    },
+    {
+      "id": "node_send_compensation",
+      "type": "external_side_effect",
+      "actions": ["send_bulk_email", "issue_compensation_voucher"],
+      "idempotency_key": null,
+      "credentials": {
+        "provider": "mail_voucher_gateway",
+        "api_key": "FAKE_TEST_KEY_DO_NOT_USE_12345",
+        "scope": "admin_full_access"
+      },
+      "retry": {
+        "enabled": true,
+        "strategy": "immediate",
+        "max_attempts": -1,
+        "jitter": false,
+        "retry_on": ["400", "401", "429", "500", "503", "timeout"],
+        "dead_letter_queue": null
+      },
+      "human_approval": {
+        "enabled": false,
+        "timeout_policy": "auto_approve",
+        "auth_required": false,
+        "one_time_token": false
+      }
+    }
+  ],
+  "governance": {
+    "redact_logs": false,
+    "max_budget_usd_per_run": null,
+    "max_loop_iterations": null
+  }
+}

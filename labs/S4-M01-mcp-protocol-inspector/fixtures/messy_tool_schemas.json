@@ -1,0 +1,88 @@
+{
+  "tools": [
+    {
+      "name": "do_data",
+      "description": "处理并导出业务数据。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "report_month": {
+            "type": "string",
+            "description": "月份"
+          },
+          "format": {
+            "type": "string",
+            "description": "输出格式，可以是 json 或者 csv 或者 markdown"
+          },
+          "max_rows": {
+            "type": "integer",
+            "description": "返回多少行都可以"
+          }
+        }
+      },
+      "return_behavior": "默认把整张销售明细宽表全部字段（最高 50MB）一次性拼成纯文本返回。"
+    },
+    {
+      "name": "manage_files",
+      "description": "管理目录里的文件，支持查看或者清理。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "list 或 delete 或 move"
+          },
+          "subdir": {
+            "type": "string",
+            "description": "子目录或路径"
+          },
+          "pattern": {
+            "type": "string",
+            "description": "匹配通配符，例如 * 或 *.md"
+          }
+        }
+      },
+      "return_behavior": "返回 shell 原始标准输出日志。"
+    },
+    {
+      "name": "query_tickets",
+      "description": "查询客服工单。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "状态，比如 open、pending、resolved"
+          },
+          "priority": {
+            "type": "string",
+            "description": "优先级 P0 到 P3"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "条数"
+          }
+        }
+      },
+      "return_behavior": "返回包含完整 HTML 历史邮件正文和 base64 内嵌图片的全部工单对象。"
+    },
+    {
+      "name": "get_current_time",
+      "description": "读取指定 IANA 时区的当前标准时间（只读，不用于日期加减换算）。参数示例：timezone='Asia/Shanghai'。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "timezone": {
+            "type": "string",
+            "description": "IANA 时区标识符，例如 Asia/Shanghai、UTC、America/New_York"
+          }
+        },
+        "required": [
+          "timezone"
+        ],
+        "additionalProperties": false
+      },
+      "return_behavior": "仅返回精简 JSON：{timezone, datetime_iso, is_dst}。"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "project_name": "acme-invoice-api",
+  "max_lines": 60,
+  "required_sections": [
+    "## 命令",
+    "## 约定",
+    "## 禁区",
+    "## 常见坑"
+  ],
+  "valid_commands": {
+    "install": "uv sync --frozen",
+    "single_test": "uv run pytest",
+    "pre_commit_check": "uv run ruff check . && uv run mypy src && uv run pytest",
+    "codegen": "uv run python scripts/gen_schema.py"
+  },
+  "stale_or_wrong_commands": [
+    "pip install -r requirements.txt",
+    "poetry run pytest",
+    "npm run test",
+    "flake8 .",
+    "nosetests"
+  ],
+  "forbidden_paths": [
+    "src/generated/",
+    "migrations/versions/",
+    "vendor/"
+  ],
+  "required_conventions": [
+    "src/core/errors.py",
+    "AppError",
+    "tests/"
+  ],
+  "required_gotchas": [
+    "TEST_DATABASE_URL=sqlite:///:memory:",
+    "scripts/gen_schema.py"
+  ],
+  "generic_bloat_phrases": [
+    "变量命名要有意义",
+    "遵循 SOLID 原则",
+    "写代码要注意可读性",
+    "函数不要太长",
+    "记得写注释",
+    "遵循 PEP8 规范"
+  ]
+}

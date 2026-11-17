@@ -1,0 +1,19 @@
+title = "AI Daily Labs Secret Hygiene Config"
+
+[[rules]]
+id = "lab-fake-test-key"
+description = "检出实验演练用伪造高危测试密钥格式"
+regex = '''(?:FAKE|DEMO|MOCK|TEST)_(?:TEST_)?(?:FAKE_)?KEY_DO_NOT_USE_[A-Za-z0-9_]{8,}'''
+tags = ["key", "security-drill"]
+
+[allowlist]
+description = "放行不含真实密钥的环境变量模板与纯占位符"
+paths = [
+  '''^\.env\.example$''',
+  '''^\.env\.template$''',
+]
+regexes = [
+  '''YOUR_API_KEY_HERE''',
+  '''<REPLACE_IN_LOCAL_ENV>''',
+  '''EXAMPLE_PLACEHOLDER_ONLY''',
+]

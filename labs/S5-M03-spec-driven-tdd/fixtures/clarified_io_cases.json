@@ -1,0 +1,92 @@
+{
+  "valid_cases": [
+    {
+      "name": "单席位无优惠码基础价",
+      "input": {"seats": 1, "currency": "CNY", "coupon_code": null},
+      "expected": {
+        "seats": 1,
+        "subtotal_cents": 10000,
+        "discount_cents": 0,
+        "payable_cents": 10000,
+        "currency": "CNY"
+      }
+    },
+    {
+      "name": "第一档上限 10 席边界",
+      "input": {"seats": 10, "currency": "CNY", "coupon_code": ""},
+      "expected": {
+        "seats": 10,
+        "subtotal_cents": 100000,
+        "discount_cents": 0,
+        "payable_cents": 100000,
+        "currency": "CNY"
+      }
+    },
+    {
+      "name": "跨一二档 12 席分段超额累进（防全量跳档脑补坑：10*10000 + 2*8000 = 116000）",
+      "input": {"seats": 12, "currency": "CNY"},
+      "expected": {
+        "seats": 12,
+        "subtotal_cents": 116000,
+        "discount_cents": 0,
+        "payable_cents": 116000,
+        "currency": "CNY"
+      }
+    },
+    {
+      "name": "跨三档 55 席累进叠加 TEAM100 优惠码（100000 + 320000 + 30000 - 10000）",
+      "input": {"seats": 55, "currency": "CNY", "coupon_code": "TEAM100"},
+      "expected": {
+        "seats": 55,
+        "subtotal_cents": 450000,
+        "discount_cents": 10000,
+        "payable_cents": 440000,
+        "currency": "CNY"
+      }
+    },
+    {
+      "name": "优惠码前后空格与小写归一化",
+      "input": {"seats": 5, "currency": "CNY", "coupon_code": "  launch30 "},
+      "expected": {
+        "seats": 5,
+        "subtotal_cents": 50000,
+        "discount_cents": 3000,
+        "payable_cents": 47000,
+        "currency": "CNY"
+      }
+    },
+    {
+      "name": "大额立减券抵扣封底保护（1席10000分用15000分券，实扣10000分，应付0分不为负）",
+      "input": {"seats": 1, "currency": "CNY", "coupon_code": "MEGA150"},
+      "expected": {
+        "seats": 1,
+        "subtotal_cents": 10000,
+        "discount_cents": 10000,
+        "payable_cents": 0,
+        "currency": "CNY"
+      }
+    }
+  ],
+  "error_cases": [
+    {
+      "name": "席位数为 0 必须抛 ValueError",
+      "input": {"seats": 0, "currency": "CNY"}
+    },
+    {
+      "name": "席位数超过自助上限 500 必须抛 ValueError",
+      "input": {"seats": 501, "currency": "CNY"}
+    },
+    {
+      "name": "席位数传入布尔值 True（Python bool 是 int 子类陷阱）必须抛 ValueError",
+      "input": {"seats": true, "currency": "CNY"}
+    },
+    {
+      "name": "传入未知优惠码严禁静默忽略，必须抛 ValueError",
+      "input": {"seats": 8, "currency": "CNY", "coupon_code": "HACK999"}
+    },
+    {
+      "name": "传入非目标币种 USD 严禁脑补汇率，必须抛 ValueError",
+      "input": {"seats": 8, "currency": "USD"}
+    }
+  ]
+}

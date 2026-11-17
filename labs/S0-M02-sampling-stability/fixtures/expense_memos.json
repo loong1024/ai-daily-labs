@@ -1,0 +1,113 @@
+{
+  "local_model_spec": {
+    "model": "qwen2.5:1.5b-instruct-q4_K_M",
+    "default_num_ctx": 2048,
+    "expanded_num_ctx": 4096,
+    "vram_mb": 1380
+  },
+  "short_memos": [
+    {
+      "id": "M-01",
+      "sensitivity": "internal",
+      "text": "【内部差旅纪要】2026年3月18日，华南交付组赴深圳拜访核心客户推进私有化部署验收，机酒及市内交通合计报销人民币 3,480.50 元。",
+      "expected": {
+        "date": "2026-03-18",
+        "amount": 3480.5,
+        "city": "深圳"
+      }
+    },
+    {
+      "id": "M-02",
+      "sensitivity": "internal",
+      "text": "2026/04/02 研发安全组前往杭州参加闭门攻防演练复盘，住宿与高铁票共计 1260 元整（不含餐补）。",
+      "expected": {
+        "date": "2026-04-02",
+        "amount": 1260.0,
+        "city": "杭州"
+      }
+    },
+    {
+      "id": "M-03",
+      "sensitivity": "confidential",
+      "text": "【法务合规内参】2026-05-11 成都分公司现场尽调差旅支出 ¥5,920.80，含异地档案调阅公证费。",
+      "expected": {
+        "date": "2026-05-11",
+        "amount": 5920.8,
+        "city": "成都"
+      }
+    },
+    {
+      "id": "M-04",
+      "sensitivity": "internal",
+      "text": "2026年6月9日供应链团队赴武汉盘点华中仓冷链设备，紧急改签及住宿实付 2105.40 元。",
+      "expected": {
+        "date": "2026-06-09",
+        "amount": 2105.4,
+        "city": "武汉"
+      }
+    },
+    {
+      "id": "M-05",
+      "sensitivity": "secret",
+      "text": "【高敏薪酬委员会纪要】2026-07-22 赴上海召开管理层期权激励闭门会，场地与差旅结算 8800.00 元。",
+      "expected": {
+        "date": "2026-07-22",
+        "amount": 8800.0,
+        "city": "上海"
+      }
+    },
+    {
+      "id": "M-06",
+      "sensitivity": "internal",
+      "text": "2026.08.15 政企驻场工程师前往南京完成政务云离线升级，差旅补贴与车票合计 985.6 元。",
+      "expected": {
+        "date": "2026-08-15",
+        "amount": 985.6,
+        "city": "南京"
+      }
+    }
+  ],
+  "long_meeting_memo": {
+    "critical_header": "【机密预算批复·卷首摘要】立项日期：2026-03-05；核准差旅总包干金额：48500.00 元；驻场城市：苏州。以下为跨部门私有化交付方案评审会议逐字背景记录：",
+    "filler_block": "与会各方围绕离线私有化网关选型、日志脱敏流水线、国产化显卡驱动兼容矩阵、内网镜像仓库同步窗口及双机热备演练排期进行了逐条核对，确认本周五前冻结接口契约并输出压测基线报告。",
+    "repeat_count": 28,
+    "tail_question": "请根据上述会议纪要提取立项日期(date)、核准差旅总包干金额(amount，纯数字浮点数)与驻场城市(city)，若未见信息填 null。",
+    "expected": {
+      "date": "2026-03-05",
+      "amount": 48500.0,
+      "city": "苏州"
+    }
+  },
+  "benchmark_profiles": [
+    {
+      "profile_id": "local_1_5b_q4",
+      "display_name": "本地轻量 1.5B (Q4_K_M)",
+      "accuracy_score": 0.86,
+      "avg_latency_ms": 420,
+      "privacy_level": "离线不出域（最高）",
+      "cost_per_1k_calls_usd": 0.0,
+      "default_num_ctx": 2048,
+      "vram_mb": 1380
+    },
+    {
+      "profile_id": "local_3b_q4",
+      "display_name": "本地均衡 3B (Q4_K_M)",
+      "accuracy_score": 0.93,
+      "avg_latency_ms": 780,
+      "privacy_level": "离线不出域（最高）",
+      "cost_per_1k_calls_usd": 0.0,
+      "default_num_ctx": 4096,
+      "vram_mb": 2450
+    },
+    {
+      "profile_id": "cloud_mini_api",
+      "display_name": "云端低价小模型 API",
+      "accuracy_score": 0.98,
+      "avg_latency_ms": 510,
+      "privacy_level": "需经公网传输（高敏文本需先脱敏）",
+      "cost_per_1k_calls_usd": 0.24,
+      "default_num_ctx": 128000,
+      "vram_mb": 0
+    }
+  ]
+}

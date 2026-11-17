@@ -1,0 +1,25 @@
+{
+  "project_name": "PR 变更自动审查与开源合规放行系统",
+  "required_theoretical_boundaries": {
+    "parallel_fit": "广度优先独立调研、多源互不依赖检索、子任务无共享可变状态且输出可压缩",
+    "serial_fit": "Cognition 两大原则——共享完整上下文（Shared Context）与行动隐含设计决策（Actions Carry Implicit Decisions），强耦合修改必须单兵串行",
+    "handoff_vs_delegation": "交接（Handoff）是将当前会话与控制权直接移交给另一角色；按契约委派（Contract Delegation）是编排者保留主控权，按明确输入输出契约派发子任务并回收验证结果",
+    "mcp_vs_a2a": "MCP 用于连接确定性工具、API 与本地资源（无自主推理状态）；A2A 用于跨组织/跨系统边界与不透明（Opaque）远程智能体按任务生命周期（含 input-required 待补充输入状态）异步协办"
+  },
+  "scoring_dimensions": [
+    "子任务可解耦度",
+    "上下文共享紧密度",
+    "成本与延迟敏感度",
+    "调试排障复杂度"
+  ],
+  "score_scale": {
+    "min": 1,
+    "max": 5
+  },
+  "agent_card_required_fields": [
+    "name",
+    "url",
+    "authentication",
+    "skills"
+  ]
+}

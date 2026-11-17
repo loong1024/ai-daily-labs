@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "description": "个人习惯打卡与日常开支交互看板测试样本（含逗号、双引号转义边界与多维筛选汇总预期值）",
+  "supported_types": [
+    "习惯打卡",
+    "日常开支"
+  ],
+  "supported_categories": [
+    "阅读",
+    "运动",
+    "餐饮",
+    "交通"
+  ],
+  "records": [
+    {
+      "id": "rec-01",
+      "date": "2026-03-01",
+      "title": "精读《人月神话》第二章",
+      "type": "习惯打卡",
+      "category": "阅读",
+      "value": 45,
+      "note": "专注阅读 45 分钟"
+    },
+    {
+      "id": "rec-02",
+      "date": "2026-03-01",
+      "title": "工作日简餐, 鸡胸肉能量碗（假设）",
+      "type": "日常开支",
+      "category": "餐饮",
+      "value": 28.5,
+      "note": "含英文逗号的标题测试 CSV 分列安全"
+    },
+    {
+      "id": "rec-03",
+      "date": "2026-03-02",
+      "title": "夜跑 5 公里有氧打卡",
+      "type": "习惯打卡",
+      "category": "运动",
+      "value": 32,
+      "note": "配速稳定 32 分钟"
+    },
+    {
+      "id": "rec-04",
+      "date": "2026-03-02",
+      "title": "地铁通勤往返（假设）",
+      "type": "日常开支",
+      "category": "交通",
+      "value": 12.0,
+      "note": "日常公共交通假设开支"
+    },
+    {
+      "id": "rec-05",
+      "date": "2026-03-03",
+      "title": "手冲咖啡豆 \"浅烘果香\"（假设）",
+      "type": "日常开支",
+      "category": "餐饮",
+      "value": 65.0,
+      "note": "含双引号的标题测试 CSV 转义"
+    },
+    {
+      "id": "rec-06",
+      "date": "2026-03-03",
+      "title": "晨间核心力量训练",
+      "type": "习惯打卡",
+      "category": "运动",
+      "value": 25,
+      "note": "居家垫上训练 25 分钟"
+    }
+  ],
+  "expected_views": {
+    "all": {
+      "filter_type": "全部",
+      "filter_category": "全部",
+      "visible_count": 6,
+      "habit_count": 3,
+      "expense_total": 105.5
+    },
+    "only_habit": {
+      "filter_type": "习惯打卡",
+      "filter_category": "全部",
+      "visible_count": 3,
+      "habit_count": 3,
+      "expense_total": 0.0
+    },
+    "food_expense": {
+      "filter_type": "日常开支",
+      "filter_category": "餐饮",
+      "visible_count": 2,
+      "habit_count": 0,
+      "expense_total": 93.5
+    }
+  }
+}

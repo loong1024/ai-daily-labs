@@ -1,0 +1,79 @@
+{
+  "workflow_draft": {
+    "name": "活动报名表自动摘要并全员群发",
+    "platform": "Feishu Base / Make 通用模板",
+    "trigger": {
+      "event": "on_any_row_updated",
+      "timezone": null,
+      "dedup_key": null,
+      "write_back_same_table": true
+    },
+    "llm_step": {
+      "output_format": "free_text",
+      "fallback_category": null,
+      "max_retries": 0
+    },
+    "delivery_step": {
+      "target_group": "全员通知大群（500人）",
+      "require_human_approval": false,
+      "idempotency_key": null
+    },
+    "ops_and_cost": {
+      "credential_note": "api_token=FAKE_TEST_KEY_DO_NOT_USE_12345（直接写在流程备注里）",
+      "error_alert_receiver": null,
+      "monthly_budget_cap_usd": null,
+      "max_loop_iterations": null
+    }
+  },
+  "drill_submissions": [
+    {
+      "submission_no": "SUB-2026-001",
+      "submitter_email": "min.zhang@example.com",
+      "submitted_at": "2026-11-16T09:00:01+08:00",
+      "deadline": "2026-12-01",
+      "topic_note": "报名参加周五下午 AI 办公自动化内训专场，共 3 人出席。",
+      "drill_tag": "normal_first_click"
+    },
+    {
+      "submission_no": "SUB-2026-001",
+      "submitter_email": "min.zhang@example.com",
+      "submitted_at": "2026-11-16T09:00:02+08:00",
+      "deadline": "2026-12-01",
+      "topic_note": "报名参加周五下午 AI 办公自动化内训专场，共 3 人出席。",
+      "drill_tag": "drill_1_double_click_duplicate"
+    },
+    {
+      "submission_no": "SUB-2026-002",
+      "submitter_email": "hao.li@example.com",
+      "submitted_at": "2026-11-16T09:15:00+08:00",
+      "deadline": "",
+      "topic_note": "时间未定 ###@@@ 乱码备注待补全 ???",
+      "drill_tag": "drill_2_empty_date_and_garbled"
+    },
+    {
+      "submission_no": "SUB-2026-003",
+      "submitter_email": "chen.wu@example.com",
+      "submitted_at": "2026-11-16T09:20:00+08:00",
+      "deadline": "2026-12-05",
+      "topic_note": "先随便看看，还不确定算咨询、合作还是内训。",
+      "drill_tag": "drill_2_ambiguous_category"
+    },
+    {
+      "submission_no": "SUB-2026-004",
+      "submitter_email": "ops.test@example.com",
+      "submitted_at": "2026-11-16T09:30:00+08:00",
+      "deadline": "2026-12-10",
+      "topic_note": "模拟把群机器人接收地址改错后的断联投递测试。",
+      "simulated_fault": "invalid_receiver_webhook_401",
+      "drill_tag": "drill_3_broken_receiver_alert"
+    },
+    {
+      "submission_no": "SUB-2026-005",
+      "submitter_email": "pm.lead@example.com",
+      "submitted_at": "2026-11-16T09:40:00+08:00",
+      "deadline": "2026-12-12",
+      "topic_note": "向 500 人全员群推送年度报名汇总公告。",
+      "drill_tag": "drill_3_mass_send_human_gate"
+    }
+  ]
+}

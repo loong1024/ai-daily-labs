@@ -1,0 +1,38 @@
+{
+  "control_group_summary": {
+    "session_mode": "无自载入规则裸奔会话（或文件名未被客户端识别）",
+    "wrong_command_attempts": 3,
+    "forbidden_dir_edits": 1,
+    "missing_lint_or_typecheck": 2
+  },
+  "tasks": [
+    {
+      "id": "task_1_tax_rounding",
+      "prompt": "修改 src/services/tax.py 中的跨境税率四舍五入逻辑，并运行对应单测与提交前检查。",
+      "control_failure": "助手先猜 `poetry run pytest` 报错，改跑裸 `pytest` 后未执行 `ruff` 与 `mypy` 直接宣布完成。",
+      "expected_command_substr": "uv run ruff check . && uv run mypy src && uv run pytest",
+      "target_path": "src/services/tax.py"
+    },
+    {
+      "id": "task_2_invoice_schema",
+      "prompt": "在发票协议 schemas/invoice.yaml 新增 currency_code 字段并同步更新类型代码。",
+      "control_failure": "助手直接手改了自动生成目录 `src/generated/invoice_models.py`，下次构建即被覆盖丢失。",
+      "expected_command_substr": "uv run python scripts/gen_schema.py",
+      "forbidden_target": "src/generated/invoice_models.py"
+    },
+    {
+      "id": "task_3_api_error_handling",
+      "prompt": "在 src/api/invoices.py 新增负金额拦截接口校验，并按项目规范抛出错误和补齐测试。",
+      "control_failure": "助手裸抛 `ValueError` 返回了 500 栈追踪，未复用 `src/core/errors.py` 的 `AppError`，且漏写 `tests/` 单测。",
+      "expected_convention": "AppError",
+      "target_path": "src/api/invoices.py"
+    },
+    {
+      "id": "task_4_integration_suite",
+      "prompt": "在本地干净终端跑通 tests/integration/test_billing_flow.py 集成测试。",
+      "control_failure": "未设置 `TEST_DATABASE_URL=sqlite:///:memory:` 导致连接默认端口超时失败，助手随后试图新增未授权依赖。",
+      "expected_env": "TEST_DATABASE_URL=sqlite:///:memory:",
+      "target_path": "tests/integration/test_billing_flow.py"
+    }
+  ]
+}

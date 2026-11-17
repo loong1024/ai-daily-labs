@@ -1,0 +1,61 @@
+{
+  "sandbox_root_name": "mcp-demo",
+  "read_only_default": true,
+  "outside_fixture_secret": "API_TOKEN=FAKE_TEST_KEY_DO_NOT_USE_12345",
+  "cases": [
+    {
+      "case_id": "SB01",
+      "title": "沙箱根目录内合法读取",
+      "rel_from_base": "mcp-demo/hello.txt",
+      "operation": "read",
+      "read_only": true,
+      "expected_allowed": true,
+      "expected_reason": "OK"
+    },
+    {
+      "case_id": "SB02",
+      "title": "沙箱嵌套子目录合法读取",
+      "rel_from_base": "mcp-demo/docs/architecture.md",
+      "operation": "read",
+      "read_only": true,
+      "expected_allowed": true,
+      "expected_reason": "OK"
+    },
+    {
+      "case_id": "SB03",
+      "title": "经典 ../ 父目录穿越读取敏感配置",
+      "rel_from_base": "mcp-demo/../../outside_system.conf",
+      "operation": "read",
+      "read_only": true,
+      "expected_allowed": false,
+      "expected_reason": "OUTSIDE_ALLOWLIST"
+    },
+    {
+      "case_id": "SB04",
+      "title": "同名前缀兄弟目录欺骗（startswith 经典绕过漏洞）",
+      "rel_from_base": "mcp-demo-secrets/credentials.env",
+      "operation": "read",
+      "read_only": true,
+      "expected_allowed": false,
+      "expected_reason": "OUTSIDE_ALLOWLIST"
+    },
+    {
+      "case_id": "SB05",
+      "title": "沙箱内符号链接指向外部敏感文件逃逸",
+      "rel_from_base": "mcp-demo/escape_symlink.conf",
+      "operation": "read",
+      "read_only": true,
+      "expected_allowed": false,
+      "expected_reason": "SYMLINK_ESCAPE"
+    },
+    {
+      "case_id": "SB06",
+      "title": "只读挂载模式下尝试覆盖写入沙箱内文件",
+      "rel_from_base": "mcp-demo/hello.txt",
+      "operation": "write",
+      "read_only": true,
+      "expected_allowed": false,
+      "expected_reason": "READ_ONLY_VIOLATION"
+    }
+  ]
+}

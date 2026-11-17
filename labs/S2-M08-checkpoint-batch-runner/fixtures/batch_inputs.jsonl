@@ -1,0 +1,30 @@
+{"id": "rec-001", "source": "billing", "content": "导出月度账单 CSV 时中文表头在 Excel 下乱码，建议补充 UTF-8 BOM 选项。"}
+{"id": "rec-002", "source": "calendar", "content": "跨时区预约会议后提醒卡片仍显示创建者本地时间，希望同时展示参会人时区。"}
+{"id": "rec-003", "source": "webhook", "content": "下游接收端偶发 2 秒抖动时希望支持自动退避重推，而不是直接标记投递失败。"}
+{"id": "rec-004", "source": "dashboard", "content": "周报看板按部门筛选后切换日期区间会重置筛选项，期望保留当前过滤上下文。"}
+{"id": "rec-005", "source": "sso", "content": "企业单点登录同步组织架构后离职成员组权限延迟 30 分钟才回收，需缩短同步周期。"}
+{"id": "rec-006", "source": "mobile", "content": "安卓端后台静默 1 小时后审批待办推送偶发延迟，打开应用才集中弹出。"}
+{"id": "rec-007", "source": "table", "content": "多维表格超过两千行后分组折叠切换略有卡顿，建议优化前端虚拟滚动渲染。"}
+{"id": "rec-008", "source": "export", "content": "批量导出 PDF 报告时包含宽表格会自动截断右侧两列，希望能自适应横向排版。"}
+{"id": "rec-009", "source": "search", "content": "全局搜索输入带连字符的项目编号时召回不准，建议支持精确短语匹配。"}
+{"id": "rec-010", "source": "notification", "content": "同一工单连续修改三次字段会连发三条群通知，建议合并 1 分钟内的变更摘要。"}
+{"id": "rec-011", "source": "import_sync", "content": "", "note": "poison_pill_empty_content"}
+{"id": "rec-012", "source": "permission", "content": "只读协作者目前仍能看到历史版本里的隐藏备注列，需按字段级权限严格过滤。"}
+{"id": "rec-013", "source": "api", "content": "批量查询接口分页游标在并发写入时偶发漏掉边界记录，建议改用稳定排序游标。"}
+{"id": "rec-014", "source": "template", "content": "新建项目复刻模板时自动化规则里的目标群组需要支持一键批量替换。"}
+{"id": "rec-015", "source": "audit", "content": "管理员后台操作日志目前只保留 30 天，合规归档希望能支持按月导出留存。"}
+{"id": "rec-016", "source": "form", "content": "外部收集表上传附件限制单文件 10MB 偏小，设计稿提交常超限，建议放宽至 50MB。"}
+{"id": "rec-017", "source": "workflow", "content": "定时工作流遇到节假日仍照常发晨会催办，希望内置法定工作日日历开关。"}
+{"id": "rec-018", "source": "chart", "content": "折线图双坐标轴在暗色模式下辅助网格线对比度过高，遮挡数据标签阅读。"}
+{"id": "rec-019", "source": "comment", "content": "文档评论区提及多人时若对方无文档权限不会提示授权，常导致对方收不到上下文。"}
+{"id": "rec-020", "source": "backup", "content": "误删多维表格子视图后目前只能整表回滚，希望能单独恢复指定视图配置。"}
+{"id": "rec-021", "source": "integration", "content": "工单系统关联代码合并状态时偶发漏同步关闭事件，建议增加每日定时对账兜底。"}
+{"id": "rec-022", "source": "quota", "content": "团队自动化月度额度用满 80% 时缺少主动提醒，等到 100% 停服才发现。"}
+{"id": "rec-023", "source": "locale", "content": "英文界面下部分日期选择器仍混排中文星期缩写，需要统一多语言词条。"}
+{"id": "rec-024", "source": "legacy_webhook", "content": null, "note": "poison_pill_null_content"}
+{"id": "rec-025", "source": "shortcut", "content": "键盘快捷键在中文输入法候选框激活时会误触保存并关闭弹窗，需判断组合键状态。"}
+{"id": "rec-026", "source": "approval", "content": "多级会签节点其中一人请假时支持转交代审，但转交记录未展示在审批时间线中。"}
+{"id": "rec-027", "source": "attachment", "content": "在线预览长图附件时默认缩放到适应窗口导致文字模糊，希望记住原图比例偏好。"}
+{"id": "rec-028", "source": "tag", "content": "客户反馈标签池累积近百个近义词，希望能按语义自动归并重复标签。"}
+{"id": "rec-029", "source": "sla", "content": "高优工单距响应超时剩余 15 分钟时希望向值班群发送二次升级提醒。"}
+{"id": "rec-030", "source": "archive", "content": "已结项半年的历史项目归档后仍出现在默认下拉列表，建议默认折叠归档项。"}

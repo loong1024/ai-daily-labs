@@ -1,0 +1,54 @@
+{
+  "locked_contracts": ["app/contracts.py"],
+  "seed_files": {
+    ".gitignore": ".env\n.venv_shared\n__pycache__/\n*.pyc\n",
+    "app/__init__.py": "",
+    "app/contracts.py": "from dataclasses import dataclass\n\n\n@dataclass(frozen=True)\nclass OrderRecord:\n    order_id: str\n    amount_cents: int\n    status: str\n",
+    "app/exporter.py": "from app.contracts import OrderRecord\n\n\ndef export_orders_csv(orders: list[OrderRecord]) -> str:\n    # Baseline stub before feat/export\n    return \"order_id,amount_cents,status\"\n",
+    "app/paginator.py": "def paginate(items: list, page: int, page_size: int) -> list:\n    # Buggy baseline: off-by-one skips first page when page=1\n    start = page * page_size\n    return items[start : start + page_size]\n",
+    "tests/__init__.py": "",
+    "tests/test_contracts.py": "import unittest\nfrom app.contracts import OrderRecord\n\n\nclass ContractLockTest(unittest.TestCase):\n    def test_order_record_fields_locked(self) -> None:\n        rec = OrderRecord(order_id=\"ORD-1\", amount_cents=990, status=\"PAID\")\n        self.assertEqual(rec.order_id, \"ORD-1\")\n        self.assertEqual(rec.amount_cents, 990)\n"
+  },
+  "orthogonal_pair": {
+    "task_a": {
+      "name": "export_csv",
+      "branch": "feat/export",
+      "worktree_slug": "wt-feat-export",
+      "commit_message": "feat(export): implement CSV row formatting with sandbox env check",
+      "target_files": ["app/exporter.py", "tests/test_exporter.py"],
+      "file_updates": {
+        "app/exporter.py": "import json\nimport pathlib\nfrom app.contracts import OrderRecord\n\n\ndef load_local_env(root: pathlib.Path) -> dict[str, str]:\n    env_map: dict[str, str] = {}\n    env_file = root / \".env\"\n    if env_file.is_file():\n        for raw in env_file.read_text(encoding=\"utf-8\").splitlines():\n            line = raw.strip()\n            if line and not line.startswith(\"#\") and \"=\" in line:\n                k, v = line.split(\"=\", 1)\n                env_map[k.strip()] = v.strip()\n    return env_map\n\n\ndef shared_deps_ready(root: pathlib.Path) -> bool:\n    marker = root / \".venv_shared\" / \"site_packages_marker.json\"\n    if not marker.is_file():\n        return False\n    data = json.loads(marker.read_text(encoding=\"utf-8\"))\n    return bool(data.get(\"ready\"))\n\n\ndef export_orders_csv(orders: list[OrderRecord], delimiter: str = \",\") -> str:\n    lines = [delimiter.join([\"order_id\", \"amount_cents\", \"status\"])]\n    for row in orders:\n        lines.append(delimiter.join([row.order_id, str(row.amount_cents), row.status]))\n    return \"\\n\".join(lines)\n",
+        "tests/test_exporter.py": "import pathlib\nimport unittest\nfrom app.contracts import OrderRecord\nfrom app.exporter import export_orders_csv, load_local_env, shared_deps_ready\n\n\nclass ExporterWorktreeTest(unittest.TestCase):\n    def test_csv_export_and_isolated_env(self) -> None:\n        root = pathlib.Path(__file__).resolve().parents[1]\n        self.assertTrue(shared_deps_ready(root), \"缺少 .venv_shared 共享依赖链接\")\n        env_map = load_local_env(root)\n        self.assertEqual(env_map.get(\"APP_ENV\"), \"test\")\n        self.assertEqual(env_map.get(\"TEST_SANDBOX_TOKEN\"), \"FAKE_TEST_KEY_DO_NOT_USE_12345\")\n        self.assertNotIn(\"PROD_DB_PASSWORD\", env_map)\n        self.assertNotIn(\"STRIPE_LIVE_SECRET\", env_map)\n        csv_out = export_orders_csv([OrderRecord(\"ORD-7\", 1500, \"PAID\")], env_map.get(\"EXPORT_DELIMITER\", \",\"))\n        self.assertEqual(csv_out.splitlines()[1], \"ORD-7,1500,PAID\")\n"
+      }
+    },
+    "task_b": {
+      "name": "fix_pagination",
+      "branch": "fix/pagination",
+      "worktree_slug": "wt-fix-pagination",
+      "commit_message": "fix(pagination): correct 1-based page offset and max page size guard",
+      "target_files": ["app/paginator.py", "tests/test_paginator.py"],
+      "file_updates": {
+        "app/paginator.py": "def paginate(items: list, page: int, page_size: int, max_size: int = 100) -> list:\n    if page < 1 or page_size < 1:\n        raise ValueError(\"page and page_size must be >= 1\")\n    effective_size = min(page_size, max_size)\n    start = (page - 1) * effective_size\n    if start >= len(items):\n        return []\n    return items[start : start + effective_size]\n",
+        "tests/test_paginator.py": "import json\nimport pathlib\nimport unittest\nfrom app.paginator import paginate\n\n\nclass PaginatorWorktreeTest(unittest.TestCase):\n    def test_one_based_offset_and_shared_deps(self) -> None:\n        root = pathlib.Path(__file__).resolve().parents[1]\n        marker = root / \".venv_shared\" / \"site_packages_marker.json\"\n        self.assertTrue(marker.is_file(), \"缺少 .venv_shared 共享依赖链接\")\n        self.assertTrue(json.loads(marker.read_text(encoding=\"utf-8\")).get(\"ready\"))\n        env_text = (root / \".env\").read_text(encoding=\"utf-8\")\n        self.assertIn(\"PAGE_MAX_SIZE=100\", env_text)\n        self.assertNotIn(\"STRIPE_LIVE_SECRET\", env_text)\n        data = [10, 20, 30, 40, 50]\n        self.assertEqual(paginate(data, page=1, page_size=2), [10, 20])\n        self.assertEqual(paginate(data, page=2, page_size=2), [30, 40])\n        self.assertEqual(paginate(data, page=9, page_size=2), [])\n"
+      }
+    }
+  },
+  "conflicting_pair": {
+    "task_c": {
+      "name": "mutate_contract",
+      "branch": "feat/currency-contract",
+      "worktree_slug": "wt-currency",
+      "commit_message": "feat: add currency field to locked OrderRecord",
+      "target_files": ["app/contracts.py", "app/exporter.py"],
+      "file_updates": {}
+    },
+    "task_d": {
+      "name": "rewrite_exporter",
+      "branch": "refactor/exporter-v2",
+      "worktree_slug": "wt-exporter-v2",
+      "commit_message": "refactor: rewrite exporter output",
+      "target_files": ["app/exporter.py", "app/paginator.py"],
+      "file_updates": {}
+    }
+  }
+}

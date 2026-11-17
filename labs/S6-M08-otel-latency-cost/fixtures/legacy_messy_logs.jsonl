@@ -1,0 +1,6 @@
+{"timestamp": "2026-11-01T09:12:04Z", "model_name": "gpt-4o-mini", "step": "router", "stream": false, "time_used_sec": 1.24, "words_in": 5800, "words_out": 45}
+{"timestamp": "2026-11-01T09:12:06Z", "model_name": "deepseek-chat", "step": "answer", "stream": false, "time_used_sec": 2.15, "words_in": 6600, "words_out": 260}
+{"timestamp": "2026-11-01T09:13:11Z", "model": "gpt-4o-mini", "stage": "router", "elapsed": 1190, "prompt_len": 5750}
+{"timestamp": "2026-11-01T09:13:14Z", "model": "deepseek-chat", "stage": "answer", "elapsed": 2310, "prompt_len": 6580}
+{"timestamp": "2026-11-01T09:15:02Z", "llm": "gpt-4o-mini", "latency": "1.31s", "total_tokens": 5890, "note": "不知道和下面哪条是一起的"}
+{"timestamp": "2026-11-01T09:15:05Z", "llm": "deepseek-chat", "latency": "2.48s", "total_tokens": 6840, "note": "缺 trace_id 也看不出缓存命中"}

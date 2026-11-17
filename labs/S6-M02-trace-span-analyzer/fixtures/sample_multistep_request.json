@@ -1,0 +1,96 @@
+{
+  "normal_request": {
+    "request_id": "req_20261116_001",
+    "user_id": "user_wangmin_13812345678",
+    "prompt_version": "v2.2",
+    "model": "gpt-4o-mini-2024-07-18",
+    "feature": "travel_concierge",
+    "status": "ok",
+    "steps": [
+      {
+        "step_id": "sp_01",
+        "type": "retrieval",
+        "name": "kb_policy_search",
+        "duration_ms": 185,
+        "tokens": 0,
+        "hit_count": 3,
+        "input": "联系人王敏 13812345678（邮箱 wangmin88@corp-demo.cn）查询上海差旅住宿报销上限",
+        "output": "命中《差旅标准 2026》：上海一线城市住宿上限 650 元/晚"
+      },
+      {
+        "step_id": "sp_02",
+        "type": "tool",
+        "name": "get_weather",
+        "duration_ms": 240,
+        "tokens": 0,
+        "input": "{\"city\": \"上海\", \"date\": \"2026-11-17\"}",
+        "output": "{\"weather\": \"多云\", \"temp_c\": \"12~18\"}"
+      },
+      {
+        "step_id": "sp_03",
+        "type": "llm",
+        "name": "chat_generate",
+        "duration_ms": 620,
+        "tokens": 310,
+        "input": "用户手机 13812345678 邮箱 wangmin88@corp-demo.cn 询问上海明天天气及差旅标准",
+        "output": "上海明日多云（12~18℃），差旅住宿报销标准上限为 650 元/晚，通知将发送至 wangmin88@corp-demo.cn。"
+      }
+    ]
+  },
+  "sneaky_duplicate_request": {
+    "request_id": "req_20261116_002",
+    "user_id": "user_zhao_13987654321",
+    "prompt_version": "v2.2",
+    "model": "gpt-4o-mini-2024-07-18",
+    "feature": "travel_concierge",
+    "status": "ok",
+    "steps": [
+      {
+        "step_id": "sp_11",
+        "type": "retrieval",
+        "name": "kb_policy_search",
+        "duration_ms": 160,
+        "tokens": 0,
+        "hit_count": 2,
+        "input": "深圳出差补贴标准",
+        "output": "深圳伙食补贴 120 元/天"
+      },
+      {
+        "step_id": "sp_12",
+        "type": "tool",
+        "name": "get_weather",
+        "duration_ms": 230,
+        "tokens": 0,
+        "input": "{\"city\": \"深圳\"}",
+        "output": "{\"weather\": \"晴\", \"temp_c\": \"20~26\"}"
+      },
+      {
+        "step_id": "sp_13",
+        "type": "tool",
+        "name": "get_weather",
+        "duration_ms": 245,
+        "tokens": 0,
+        "input": "{\"city\": \"深圳\"}",
+        "output": "{\"weather\": \"晴\", \"temp_c\": \"20~26\"}"
+      },
+      {
+        "step_id": "sp_14",
+        "type": "tool",
+        "name": "get_weather",
+        "duration_ms": 250,
+        "tokens": 0,
+        "input": "{\"city\": \"深圳\"}",
+        "output": "{\"weather\": \"晴\", \"temp_c\": \"20~26\"}"
+      },
+      {
+        "step_id": "sp_15",
+        "type": "llm",
+        "name": "chat_generate",
+        "duration_ms": 890,
+        "tokens": 940,
+        "input": "汇总深圳天气与补贴",
+        "output": "深圳晴（20~26℃），出差伙食补贴 120 元/天。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "title": "企业团队席位阶梯报价器（含优惠码抵扣）",
+  "vague_prompt": "给企业团队订阅写个算总价的函数，支持席位阶梯打折和优惠码，返回应付金额。",
+  "tech_stack": "Python 3.11 纯标准库，金额一律使用整数分（cents），禁止使用 float 计算金额",
+  "existing_conventions": "同模块既有辅助函数 normalize_account_slug(raw) 被上游账单导出依赖，严禁顺手修改其行为",
+  "hard_constraints": "单次调用零外部网络请求；禁止引入第三方依赖；输出字典字段严格匹配规格契约",
+  "po_clarifications": [
+    {
+      "question_id": "Q1",
+      "topic": "席位阶梯采用全量跳档打折还是分段超额累进计费？席位上限是多少？",
+      "decision": "采用分段超额累进计费（Marginal Tiered Pricing）：1-10席每席10000分，11-50席超出部分每席8000分，51-500席超出部分每席6000分；自助下单席位须为 1..500 的严格整数（拒绝 bool、0、负数及 >500）。"
+    },
+    {
+      "question_id": "Q2",
+      "topic": "优惠码面额大于原价时如何处理？未知优惠码是忽略还是报错？",
+      "decision": "优惠码去首尾空格并转大写后匹配内置表（LAUNCH30=3000分, TEAM100=10000分, MEGA150=15000分）；未知非空优惠码必须显式抛出 ValueError；抵扣额 discount_cents = min(subtotal_cents, coupon_value)，确保 payable_cents 最低为 0 分绝不为负。"
+    },
+    {
+      "question_id": "Q3",
+      "topic": "本次明确不做什么（Non-Goals）？",
+      "decision": "1) 不做多币种汇率换算（仅支持 currency='CNY'，传入 USD 等其他币种一律抛 ValueError）；2) 不做税费计算与会员积分赠送（严禁在返回字典中添加 tax_cents、vip_points 等额外字段）；3) 不修改同文件既有函数 normalize_account_slug。"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "documents": [
+    {
+      "doc_id": "DOC-01",
+      "filename": "2026_Q1_AI网关架构双栏白皮书.pdf",
+      "doc_type": "two_column_pdf",
+      "year": "2026",
+      "department": "基础架构部",
+      "expected_status": "现行有效",
+      "defects": [
+        "左右双栏文字横向串行拼接",
+        "每页混入重复页眉页脚与页码"
+      ],
+      "forbidden_dirty_fragments": [
+        "请求经过鉴权网关后进入 3.2 节 灰度监控告警阈值",
+        "机密内部资料 · 第 4 页 / 共 18 页"
+      ]
+    },
+    {
+      "doc_id": "DOC-02",
+      "filename": "差旅酒店住宿报销标准合并表_2026版.xlsx",
+      "doc_type": "merged_cell_table",
+      "year": "2026",
+      "department": "财务部/全员",
+      "expected_status": "现行有效",
+      "defects": [
+        "纵向合并单元格拆散后第 2 行起丢失城市分类",
+        "长表格第 2 个切片丢失列头导致淡旺季金额混淆"
+      ],
+      "forbidden_dirty_fragments": [
+        "|  | P8及以上 | 800 | 700 |"
+      ]
+    },
+    {
+      "doc_id": "DOC-03",
+      "filename": "供应商保密协议签字扫描件_2025.pdf",
+      "doc_type": "blurry_scan_pdf",
+      "year": "2025",
+      "department": "法务采购部",
+      "expected_status": "现行有效",
+      "defects": [
+        "第 1-2 页纯图片未做 OCR 导出为空白，夹杂 1 页纯白分隔页",
+        "第 3 页存在全角数字与形近错字（合冋总额的２０％）",
+        "第 4 页附件因印泥墨迹重度污染无法识别，需记录并隔离"
+      ],
+      "forbidden_dirty_fragments": [
+        "合冋总额的２０％"
+      ]
+    },
+    {
+      "doc_id": "DOC-04",
+      "filename": "内网Wiki_容器镜像安全规范导出页.html",
+      "doc_type": "noisy_web_article",
+      "year": "2026",
+      "department": "安全工程部",
+      "expected_status": "现行有效",
+      "defects": [
+        "首尾混入顶部导航栏、Cookie 提示及侧边栏公众号推广噪音",
+        "按固定字符硬切分，将 docker 镜像签名校验脚本拦腰截断"
+      ],
+      "forbidden_dirty_fragments": [
+        "扫码关注公众号领取云原生礼包",
+        "首页 > 热门榜单 > 猜你喜欢"
+      ]
+    },
+    {
+      "doc_id": "DOC-05",
+      "filename": "员工差旅与招待费管理办法_2022旧版.docx",
+      "doc_type": "outdated_policy_doc",
+      "year": "2022",
+      "department": "财务部/历史归档",
+      "expected_status": "已失效",
+      "defects": [
+        "缺少生效年份与失效替代标签，一线城市 450 元旧标准与 2026 版 650 元现行标准直接冲突",
+        "切片无文档名与章节前缀，脱离原文件看不出是 2022 废止条款"
+      ],
+      "forbidden_dirty_fragments": [
+        "现行一线城市住宿报销上限统一为450元"
+      ]
+    }
+  ]
+}

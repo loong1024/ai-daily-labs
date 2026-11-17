@@ -1,0 +1,45 @@
+{
+  "release_tag": "v0.9.4-rc1",
+  "artifacts": [
+    {
+      "path": "dist/assets/index-8f3a2b.js",
+      "source": "frontend_build",
+      "content": "const API_BASE='/api/v1/chat'; const DEBUG_PROVIDER_KEY='FAKE_TEST_KEY_DO_NOT_USE_9876543210ABCDEF'; export { API_BASE };"
+    },
+    {
+      "path": "git_history_patch.txt",
+      "source": "git_log",
+      "content": "commit a41c92e8b\nAuthor: dev@example.com\nDate: 2026-10-12\n\n+LLM_API_SECRET=FAKE_TEST_KEY_DO_NOT_USE_HIST_00112233\n+ENABLE_STREAM=true"
+    },
+    {
+      "path": ".env.example",
+      "source": "repo_template",
+      "content": "LLM_API_SECRET=YOUR_API_KEY_PLACEHOLDER\nOPENAI_MODEL=gpt-4o-mini\nHARD_LIMIT_USD=50"
+    },
+    {
+      "path": "dist/index.html",
+      "source": "frontend_build",
+      "content": "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><title>AI 助手</title></head><body><div id='root'></div><script src='/assets/index.js'></script></body></html>"
+    }
+  ],
+  "billing_configs": {
+    "soft_only": {
+      "provider": "model_cloud",
+      "soft_alert_email": "founder@example.com",
+      "soft_alert_usd": 20.0,
+      "hard_cap_enabled": false,
+      "hard_limit_usd": null,
+      "rollback_rehearsed": true,
+      "alerts": ["error_rate", "latency_p95", "spend"]
+    },
+    "production_ready": {
+      "provider": "model_cloud",
+      "soft_alert_email": "founder@example.com",
+      "soft_alert_usd": 20.0,
+      "hard_cap_enabled": true,
+      "hard_limit_usd": 50.0,
+      "rollback_rehearsed": true,
+      "alerts": ["error_rate", "latency_p95", "spend"]
+    }
+  }
+}

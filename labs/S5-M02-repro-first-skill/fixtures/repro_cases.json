@@ -1,0 +1,99 @@
+{
+  "bug_reports": {
+    "historical_bug": {
+      "ticket_id": "BUG-2026-0418",
+      "environment": "Python 3.11 / billing_refund 模块",
+      "repro_steps": [
+        "1. 用户购买 30 天专业版会员（原价 10000 分），使用满减券 promo_cents=3000，实付 paid_cents=7000 分。",
+        "2. 使用 15 天后（used_days=15, total_days=30）发起中途退订；另一同款订单在使用 25 天后发起退订。"
+      ],
+      "expected": "按实付金额 paid_cents 与剩余天数比例向下取整折算：(paid_cents * remaining_days) // total_days（且 >= 0）。用 15 天应退 3500 分，用 25 天应退 1166 分；既有无券订单行为保持不变。",
+      "actual_and_stacktrace": "用 15 天仅退了 500 分（被重复扣减了一次 3000 分优惠券）；用 25 天算出 -1834 分触发网关报错 PaymentGatewayError: 400 INVALID_REFUND_AMOUNT: refund_cents=-1834 must be >= 0"
+    },
+    "pseudo_bug_missing_info": {
+      "user_message": "刚才点了一下退款按钮页面好像卡住了，你快去把 billing 里的接口超时和金额逻辑全改一下！",
+      "expected_agent_behavior": "缺少报错堆栈、复现步骤、期望与实际行为对比及运行环境，必须先向用户询问补充，严禁猜测盲改代码。"
+    }
+  },
+  "pytest_runs": {
+    "all_pass_verbose": "============================= test session starts ==============================\nplatform linux -- Python 3.11.9, pytest-8.2.0\nrootdir: /workspace/billing-service\ncollected 6 items\n\nDEBUG [billing.db] opening sqlite:///memory pool_size=5\nDEBUG [billing.audit] trace_id=req-001 initialized\ntests/test_billing.py::test_full_unused_refund PASSED                    [ 16%]\nDEBUG [billing.audit] trace_id=req-002 initialized\ntests/test_billing.py::test_expired_membership_zero_refund PASSED        [ 33%]\nDEBUG [billing.audit] trace_id=req-003 initialized\ntests/test_billing.py::test_standard_mid_cycle_no_promo PASSED           [ 50%]\nDEBUG [billing.audit] trace_id=req-004 initialized\ntests/test_billing.py::test_single_day_remaining PASSED                  [ 66%]\nDEBUG [billing.audit] trace_id=req-005 initialized\ntests/test_billing.py::test_invalid_total_days_raises PASSED             [ 83%]\nDEBUG [billing.audit] trace_id=req-006 initialized\ntests/test_billing.py::test_negative_used_days_treated_as_unused PASSED  [100%]\n\n============================== 6 passed in 0.18s ===============================",
+    "multi_fail_verbose": "============================= test session starts ==============================\nplatform linux -- Python 3.11.9, pytest-8.2.0\nrootdir: /workspace/billing-service\ncollected 5 items\n\nDEBUG [billing.db] opening sqlite:///memory pool_size=5\ntests/test_billing.py::test_full_unused_refund PASSED                    [ 20%]\nDEBUG [billing.audit] checking expired case\ntests/test_billing.py::test_expired_membership_zero_refund PASSED        [ 40%]\nDEBUG [billing.audit] checking standard mid cycle\ntests/test_billing.py::test_standard_mid_cycle_no_promo PASSED           [ 60%]\nDEBUG [billing.audit] checking coupon order 7000 paid / 3000 promo\ntests/test_billing.py::test_refund_with_promo_coupon FAILED              [ 80%]\nDEBUG [billing.audit] checking coupon order near expiry day 25\ntests/test_billing.py::test_refund_near_expiry_non_negative FAILED       [100%]\n\n=================================== FAILURES ===================================\n________________________ test_refund_with_promo_coupon _________________________\n\n    def test_refund_with_promo_coupon():\n        actual = calculate_prorated_refund(paid_cents=7000, total_days=30, used_days=15, promo_cents=3000)\n>       assert actual == 3500\nE       AssertionError: assert 500 == 3500\n\ntests/test_billing.py:42: AssertionError\n____________________ test_refund_near_expiry_non_negative ______________________\n\n    def test_refund_near_expiry_non_negative():\n        actual = calculate_prorated_refund(paid_cents=7000, total_days=30, used_days=25, promo_cents=3000)\n>       assert actual == 1166\nE       AssertionError: assert -1834 == 1166\n\ntests/test_billing.py:49: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_billing.py::test_refund_with_promo_coupon - AssertionError: assert 500 == 3500\nFAILED tests/test_billing.py::test_refund_near_expiry_non_negative - AssertionError: assert -1834 == 1166\n========================= 2 failed, 3 passed in 0.24s =========================="
+  },
+  "triage_scenarios": [
+    {
+      "id": "SC-01",
+      "title": "缺少复现步骤与报错堆栈，严禁盲猜直接改代码",
+      "state": {
+        "has_stacktrace": false,
+        "has_repro_steps": false,
+        "has_expected_actual": true,
+        "has_env_info": true,
+        "repro_test_failing_confirmed": false,
+        "failed_attempts": 0,
+        "touches_public_api_or_schema": false,
+        "user_approved_breaking_change": false
+      },
+      "expected_action": "ask_user"
+    },
+    {
+      "id": "SC-02",
+      "title": "同一问题已连续 2 次修复无效，触发止损回滚并汇报",
+      "state": {
+        "has_stacktrace": true,
+        "has_repro_steps": true,
+        "has_expected_actual": true,
+        "has_env_info": true,
+        "repro_test_failing_confirmed": true,
+        "failed_attempts": 2,
+        "touches_public_api_or_schema": false,
+        "user_approved_breaking_change": false
+      },
+      "expected_action": "rollback_and_report"
+    },
+    {
+      "id": "SC-03",
+      "title": "拟定修复方案需改动数据库表结构/公共接口且尚未获批，先请示用户",
+      "state": {
+        "has_stacktrace": true,
+        "has_repro_steps": true,
+        "has_expected_actual": true,
+        "has_env_info": true,
+        "repro_test_failing_confirmed": true,
+        "failed_attempts": 0,
+        "touches_public_api_or_schema": true,
+        "user_approved_breaking_change": false
+      },
+      "expected_action": "request_approval"
+    },
+    {
+      "id": "SC-04",
+      "title": "四要素齐全但尚未写出必败复现测试，必须先写最小复现测试",
+      "state": {
+        "has_stacktrace": true,
+        "has_repro_steps": true,
+        "has_expected_actual": true,
+        "has_env_info": true,
+        "repro_test_failing_confirmed": false,
+        "failed_attempts": 0,
+        "touches_public_api_or_schema": false,
+        "user_approved_breaking_change": false
+      },
+      "expected_action": "write_repro_test"
+    },
+    {
+      "id": "SC-05",
+      "title": "必败测试已确认失败、根因明确且不涉及高危契约变更，执行最小范围修复",
+      "state": {
+        "has_stacktrace": true,
+        "has_repro_steps": true,
+        "has_expected_actual": true,
+        "has_env_info": true,
+        "repro_test_failing_confirmed": true,
+        "failed_attempts": 1,
+        "touches_public_api_or_schema": false,
+        "user_approved_breaking_change": false
+      },
+      "expected_action": "apply_minimal_fix"
+    }
+  ]
+}

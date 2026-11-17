@@ -1,0 +1,28 @@
+{
+  "v1_files": {
+    "deploy.md": "# 部署手册\n生产环境服务端口统一为 8080，健康检查路径 /healthz。",
+    "pricing.md": "# 报价单\n基础版订阅月费为 99 元/月，包含 5 个席位。",
+    "legacy_vpn.md": "# 旧版内网拨号\n拨号网关地址 10.0.0.1（即将下线）。"
+  },
+  "v2_files": {
+    "deploy.md": "# 部署手册\n生产环境服务端口统一为 8080，健康检查路径 /healthz。",
+    "pricing.md": "# 报价单\n基础版订阅月费已调整为 149 元/月，包含 10 个席位。"
+  },
+  "queries": [
+    {
+      "q": "基础版订阅月费多少钱",
+      "must_contain": "149 元/月",
+      "must_not_contain": "99 元/月"
+    },
+    {
+      "q": "旧版内网拨号网关地址",
+      "must_contain": "",
+      "must_not_contain": "10.0.0.1"
+    },
+    {
+      "q": "生产环境服务端口与健康检查",
+      "must_contain": "8080",
+      "must_not_contain": ""
+    }
+  ]
+}

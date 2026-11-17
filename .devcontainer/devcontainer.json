@@ -1,0 +1,12 @@
+{
+  "name": "AI 日课 · 66 动手实验沙盒 (Vibe Coding Ready)",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "postCreateCommand": "python3 scripts/verify_all_labs.py --solution",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  }
+}

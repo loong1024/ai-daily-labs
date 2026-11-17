@@ -1,0 +1,35 @@
+{
+  "snapshot_date": "2026-11-01",
+  "verified_pypi_packages": {
+    "fastapi": {
+      "publisher": "tiangolo",
+      "repo": "https://github.com/fastapi/fastapi",
+      "active": true
+    },
+    "pydantic": {
+      "publisher": "pydantic",
+      "repo": "https://github.com/pydantic/pydantic",
+      "active": true
+    },
+    "pytest": {
+      "publisher": "pytest-dev",
+      "repo": "https://github.com/pytest-dev/pytest",
+      "active": true
+    },
+    "httpx": {
+      "publisher": "encode",
+      "repo": "https://github.com/encode/httpx",
+      "active": true
+    },
+    "sqlalchemy": {
+      "publisher": "sqlalchemy",
+      "repo": "https://github.com/sqlalchemy/sqlalchemy",
+      "active": true
+    }
+  },
+  "stdlib_equivalents": {
+    "fastjson-ultra-parse": "json",
+    "py-sha256-fast": "hashlib",
+    "easy-decimal-math": "decimal"
+  }
+}

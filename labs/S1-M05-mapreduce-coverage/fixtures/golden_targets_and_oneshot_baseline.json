@@ -1,0 +1,51 @@
+{
+  "all_chunks": [
+    "C01", "C02", "C03", "C04", "C05", "C06",
+    "C07", "C08", "C09", "C10", "C11", "C12"
+  ],
+  "empty_chunks": ["C04", "C08"],
+  "substantive_chunks": [
+    "C01", "C02", "C03", "C05", "C06",
+    "C07", "C09", "C10", "C11", "C12"
+  ],
+  "conflict_pair": {
+    "sales_chunk": "C03",
+    "sales_figure": "6.5",
+    "supply_chunk": "C07",
+    "supply_figure": "4.8",
+    "gap_figure": "1.7"
+  },
+  "golden_targets": [
+    {
+      "target_id": "T1",
+      "chunk_id": "C05",
+      "title": "欧盟电池护照强制清关死线",
+      "required_keywords": ["2027-02-18", "电池护照"]
+    },
+    {
+      "target_id": "T2",
+      "chunk_id": "C07",
+      "title": "供应链 Q4 欧盟合规版实测产能上限",
+      "required_keywords": ["4.8"]
+    },
+    {
+      "target_id": "T3",
+      "chunk_id": "C09",
+      "title": "核心三电备件 72 小时 SLA 与日违约金比例",
+      "required_keywords": ["72", "0.5%"]
+    },
+    {
+      "target_id": "T4",
+      "chunk_id": "C10",
+      "title": "匈牙利仓消防延期致鹿特丹保税仓单台附加费",
+      "required_keywords": ["140"]
+    },
+    {
+      "target_id": "T5",
+      "chunk_id": "C12",
+      "title": "10 月 15 日前法务与供应链双签督办令",
+      "required_keywords": ["10 月 15 日", "林岚", "周牧"]
+    }
+  ],
+  "oneshot_summary": "【一次性全文直出总结（对照基线）】本报告围绕 2026 年集团海外乘用车 18 万台交付目标展开，其中欧洲市场占比 45%，毛利率底线 16.5%。面对欧盟反补贴关税，团队计划推进本地 KD 组装以满足 40% 原产率门槛，销售事业部预计 Q4 向欧洲交付约 6.5 万台整车。合规方面，需推进欧盟电池法相关数据建设，并在法兰克福本地节点完成智驾视频脱敏。此外，公司还将加强售后备件保障、优化海外仓储布局、上调欧元锁汇比例并落实会后各部门协同待办。"
+}
