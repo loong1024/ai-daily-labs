@@ -9,77 +9,91 @@
   "reference_now_utc": "2026-11-16T00:00:00Z",
   "run_1_items": [
     {
-      "feed": "hn-ai-digest",
-      "title": "SQLite-Vec 0.2 Brings Hybrid Metadata Filtering to Local RAG",
-      "link": "https://blog.example.com/posts/sqlite-vec-0-2",
+      "event_id": "INTEL-20261116-001",
+      "feed": "competitor-changelog",
+      "source_org": "云帆CRM官网公告",
+      "title": "竞品云帆 CRM 突发调价：企业版 API 席位费下调 30% 并赠送本地 ERP 连接器",
+      "link": "https://intel.example.com/competitor/yunfan-crm-pricing-cut",
       "pubDate": "2026-11-15T18:30:00Z",
-      "contentSnippet": "SQLite-Vec 0.2 introduces pre-filtered KNN scans and lower memory overhead for edge RAG deployments."
+      "contentSnippet": "云帆 CRM 宣布自下月起下调百人以上企业版阶梯单价 30%，并向存量客户免费开放本地 ERP 双向同步连接器，直接冲击本季续费谈判。"
     },
     {
-      "feed": "hn-ai-digest",
-      "title": "Running Deterministic Queue Workers in Lightweight Containers",
-      "link": "https://news.example.org/engineering/deterministic-workers",
+      "event_id": "INTEL-20261116-002",
+      "feed": "industry-policy-watch",
+      "source_org": "跨境清关合规署",
+      "title": "欧盟站清关突发新规：含锂电池类目下周起强制校验 EPR 环保注册单号",
+      "link": "https://policy.example.org/eu-customs/battery-epr-mandate",
       "pubDate": "2026-11-15T21:15:00Z",
-      "contentSnippet": "Idempotent job keys and explicit dead-letter webhooks eliminate duplicate customer notifications."
+      "contentSnippet": "欧洲多国海关同步升级电子清关校验接口，未在报关单绑定有效 EPR 注册编号的在途货柜将自动挂起并加收滞港费。"
     },
     {
-      "feed": "changelog-weekly",
-      "title": "[Cross-Post] SQLite-Vec 0.2 Hybrid Filtering Release Notes",
-      "link": "https://blog.example.com/posts/sqlite-vec-0-2",
+      "event_id": "INTEL-20261116-001",
+      "feed": "saas-channel-radar",
+      "source_org": "企服渠道快讯",
+      "title": "【渠道转载】云帆 CRM 企业版降价 30% 冲击波与竞对防守策略拆解",
+      "link": "https://intel.example.com/competitor/yunfan-crm-pricing-cut",
       "pubDate": "2026-11-15T19:00:00Z",
-      "contentSnippet": "Syndicated release notes for SQLite-Vec 0.2 sharing the exact canonical article URL."
+      "contentSnippet": "多家代理商媒体同步转载云帆 CRM 调价公告，指向同一官方源链接与情报单号 INTEL-20261116-001，严禁重复刷屏大群。"
     },
     {
-      "feed": "changelog-weekly",
-      "title": "Stale Weekend Recap From Two Days Ago",
-      "link": "https://blog.example.com/posts/stale-48h-recap",
+      "event_id": "INTEL-20261113-089",
+      "feed": "saas-channel-radar",
+      "source_org": "海外仓周度盘点",
+      "title": "上周五常规盘点：北美海外仓淡季库容率例行周报",
+      "link": "https://intel.example.com/archive/stale-48h-warehouse-recap",
       "pubDate": "2026-11-13T20:00:00Z",
-      "contentSnippet": "Older than 24 hours and must be excluded before invoking the LLM summary node."
+      "contentSnippet": "发布已超 48 小时的陈旧行业例行盘点，必须在进入大模型提炼前按近 24 小时时间窗过滤剔除，防止晨会情报掺入旧闻。"
     }
   ],
   "run_2_items": [
     {
-      "feed": "hn-ai-digest",
-      "title": "SQLite-Vec 0.2 Brings Hybrid Metadata Filtering to Local RAG",
-      "link": "https://blog.example.com/posts/sqlite-vec-0-2",
+      "event_id": "INTEL-20261116-001",
+      "feed": "competitor-changelog",
+      "source_org": "云帆CRM官网公告",
+      "title": "竞品云帆 CRM 突发调价：企业版 API 席位费下调 30% 并赠送本地 ERP 连接器",
+      "link": "https://intel.example.com/competitor/yunfan-crm-pricing-cut",
       "pubDate": "2026-11-15T18:30:00Z",
-      "contentSnippet": "Repeated item during second manual trigger 2 minutes later."
+      "contentSnippet": "两分钟后二次触发或上游重试时再次拉到的已处理竞品情报，须被跨执行幂等账本直接拦截。"
     },
     {
-      "feed": "hn-ai-digest",
-      "title": "Running Deterministic Queue Workers in Lightweight Containers",
-      "link": "https://news.example.org/engineering/deterministic-workers",
+      "event_id": "INTEL-20261116-002",
+      "feed": "industry-policy-watch",
+      "source_org": "跨境清关合规署",
+      "title": "欧盟站清关突发新规：含锂电池类目下周起强制校验 EPR 环保注册单号",
+      "link": "https://policy.example.org/eu-customs/battery-epr-mandate",
       "pubDate": "2026-11-15T21:15:00Z",
-      "contentSnippet": "Repeated item during second manual trigger 2 minutes later."
+      "contentSnippet": "两分钟后二次触发时再次拉到的已处理清关新规，须被跨执行幂等账本直接拦截。"
     },
     {
-      "feed": "changelog-weekly",
-      "title": "OpenTelemetry GenAI Semantic Conventions v1.29 Published",
-      "link": "https://changelog.example.dev/releases/otel-genai-1-29",
+      "event_id": "INTEL-20261116-003",
+      "feed": "supply-chain-alert",
+      "source_org": "星航国际物流",
+      "title": "头部货代星航速递紧急通知：美西干线港口拥堵附加费今晨起上调 12%",
+      "link": "https://logistics.example.dev/alerts/us-west-port-surcharge-12pct",
       "pubDate": "2026-11-15T23:50:00Z",
-      "contentSnippet": "Standardizes token usage, latency histograms, and retry attributes across workflow orchestrators."
+      "contentSnippet": "星航速递凌晨发布旺季排仓异动预警，美西快船每票加收 12% 拥堵附加费，建议销售团队今早报价前同步更新运费测算表。"
     }
   ],
   "fault_injections": [
     {
       "fault_id": "F01_invalid_api_credential",
-      "description": "故意填入失效占位密钥触发 401 鉴权失败",
+      "description": "故意填入失效占位密钥触发 401 鉴权失败，验证主流程阻断并秒发异常告警",
       "api_key_override": "FAKE_TEST_KEY_DO_NOT_USE_12345",
       "mock_llm_raw_output": null,
       "simulated_http_error": "401 Unauthorized: credential FAKE_TEST_KEY_DO_NOT_USE_12345 rejected"
     },
     {
       "fault_id": "F02_malformed_non_json",
-      "description": "模型节点返回夹杂寒暄的非法 JSON 文本",
+      "description": "模型节点返回夹杂寒暄客套的非法 JSON 文本，验证 Schema 关卡拦截与告警",
       "api_key_override": null,
-      "mock_llm_raw_output": "好的，这是为您整理的今日摘要：{title: 未加引号的坏JSON",
+      "mock_llm_raw_output": "好的老板，这是为您整理的今日竞品异动：{title: 未加引号的坏JSON",
       "simulated_http_error": null
     },
     {
       "fault_id": "F03_missing_required_schema_keys",
-      "description": "模型返回合法 JSON 但缺失 summary 与 tags 必填字段",
+      "description": "模型返回合法 JSON 但缺失 summary 应对建议与 tags 异动标签数组",
       "api_key_override": null,
-      "mock_llm_raw_output": "{\"title\": \"仅有标题而漏掉摘要和标签数组\"}",
+      "mock_llm_raw_output": "{\"title\": \"仅有竞品调价标题却漏掉业务影响摘要与标签数组\"}",
       "simulated_http_error": null
     }
   ]

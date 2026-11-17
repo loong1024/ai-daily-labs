@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""S2-M01 自动化验收脚本：解析 n8n 工作流配置并用 fixtures 进行多轮去重与红蓝故障回放测试。"""
+"""S2-M01 自动化验收脚本：竞品动态与行业异动情报流（轻量 n8n 定时抓取、单号幂等去重与异常即时告警）。"""
 
 from __future__ import annotations
 
@@ -57,14 +57,14 @@ def _compute_schedule_wait_seconds(wf_timezone: str, probe: dict[str, Any]) -> i
   return int((candidate - now_in_wf_tz).total_seconds())
 
 
-def _mock_rss_summary_llm(messages: list[dict[str, str]]) -> str:
+def _mock_intel_summary_llm(messages: list[dict[str, str]]) -> str:
   text = messages[-1]["content"]
-  title_line = text.splitlines()[0].replace("Title:", "").strip() or "AI 工程快讯"
+  title_line = text.splitlines()[0].replace("Title:", "").strip() or "竞品与行业异动"
   return json.dumps(
       {
-          "title": f"【摘要】{title_line[:36]}",
-          "summary": "提炼核心架构改进、幂等保障与落地收益。",
-          "tags": ["AI工程", "自动化"],
+          "title": f"【异动简报】{title_line[:34]}",
+          "summary": "评估对在谈客户报价与清关履约的直接影响，晨会同步应对口径。",
+          "tags": ["竞品异动", "行业监控"],
       },
       ensure_ascii=False,
   )
@@ -88,11 +88,11 @@ def _simulate_n8n_run(
     main_wf: dict[str, Any],
     workflows_by_id: dict[str, dict[str, Any]],
     rss_items: list[dict[str, Any]],
-    seen_links_store: set[str],
+    seen_keys_store: set[str],
     reference_now_utc: datetime,
     fault: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-  """根据工作流真实连接拓扑模拟一次 n8n 执行（含去重持久态、JSON 关卡与 Error Trigger 联动）。"""
+  """根据工作流真实连接拓扑模拟一次 n8n 情报流执行（含单号/链接幂等去重、JSON 关卡与 Error Trigger 联动）。"""
   pipeline = _reachable_nodes(main_wf, "Schedule Trigger")
   node_types = [n.get("type", "") for n in pipeline]
   nodes_by_type: dict[str, dict[str, Any]] = {n.get("type", ""): n for n in pipeline}
@@ -126,19 +126,20 @@ def _simulate_n8n_run(
     cutoff = reference_now_utc - timedelta(hours=hours)
     items = [it for it in items if _parse_iso_utc(it["pubDate"]) >= cutoff]
 
-  # 2. 按文章 link 跨执行去重节点
+  # 2. 按情报单号 event_id 或原文 link 跨执行幂等去重节点
   if "n8n-nodes-base.removeDuplicates" in node_types:
     dedup_node = nodes_by_type["n8n-nodes-base.removeDuplicates"]
     params = dedup_node.get("parameters", {})
     op = str(params.get("operation", ""))
     dedupe_expr = f"{params.get('keyField', '')} {params.get('dedupeValue', '')}"
-    if "link" in dedupe_expr:
-      local_seen = seen_links_store if op == "removeItemsSeenInPreviousExecutions" else set()
+    if "event_id" in dedupe_expr or "link" in dedupe_expr:
+      local_seen = seen_keys_store if op == "removeItemsSeenInPreviousExecutions" else set()
       deduped: list[dict[str, Any]] = []
+      use_event_id = "event_id" in dedupe_expr
       for it in items:
-        url = str(it.get("link", "")).strip()
-        if url and url not in local_seen:
-          local_seen.add(url)
+        key_val = str((it.get("event_id") if use_event_id else None) or it.get("link") or "").strip()
+        if key_val and key_val not in local_seen:
+          local_seen.add(key_val)
           deduped.append(it)
       items = deduped
 
@@ -168,7 +169,7 @@ def _simulate_n8n_run(
               {"role": "system", "content": sys_prompt},
               {"role": "user", "content": f"Title: {it['title']}\nSnippet: {it['contentSnippet']}"},
           ],
-          mock_fn=_mock_rss_summary_llm,
+          mock_fn=_mock_intel_summary_llm,
           temperature=0.0,
           response_json=True,
       )
@@ -183,9 +184,9 @@ def _simulate_n8n_run(
       except Exception as exc:  # noqa: BLE001
         _route_error("Validate JSON Schema", f"JSON 契约校验拦截: {exc}")
         return {"pushed": [], "alerts": alerts_sent}
-      validated_items.append({"link": it["link"], **parsed})
+      validated_items.append({"event_id": it.get("event_id"), "link": it["link"], **parsed})
     else:
-      validated_items.append({"link": it["link"], "raw": raw_text})
+      validated_items.append({"event_id": it.get("event_id"), "link": it["link"], "raw": raw_text})
 
   # 5. Webhook 汇总发送
   if "n8n-nodes-base.httpRequest" in node_types:
@@ -195,7 +196,7 @@ def _simulate_n8n_run(
 
 
 def main() -> int:
-  v = LabVerifier("S2-M01", "轻量 n8n 即时时区、链接去重与报错告警实验")
+  v = LabVerifier("S2-M01", "竞品动态与行业异动情报流：轻量 n8n 定时抓取、单号幂等去重与异常即时告警")
   wf_path = target_file(LAB_DIR, "starter.workflow.json", "solution.workflow.json")
   fixture_data = json.loads((LAB_DIR / "fixtures" / "rss_batches.json").read_text(encoding="utf-8"))
 
@@ -203,12 +204,16 @@ def main() -> int:
     raw_bundle = json.loads(wf_path.read_text(encoding="utf-8"))
     wf_list = raw_bundle if isinstance(raw_bundle, list) else [raw_bundle]
     workflows_by_id = {str(w.get("id", "")): w for w in wf_list if isinstance(w, dict)}
-    main_wf = workflows_by_id.get("rss-daily-digest-main") or (wf_list[0] if wf_list else {})
+    main_wf = (
+        workflows_by_id.get("intel-daily-digest-main")
+        or workflows_by_id.get("rss-daily-digest-main")
+        or (wf_list[0] if wf_list else {})
+    )
   except Exception as exc:  # noqa: BLE001
     v.check(
         "n8n 工作流 JSON 语法与基础结构解析",
         False,
-        f"解析 {wf_path.name} 失败：{exc}。请确保文件是合法的 JSON 数组且包含主工作流与告警工作流。",
+        f"解析 {wf_path.name} 失败：{exc}。请确保文件是合法的 JSON 数组且包含主情报工作流与告警工作流。",
     )
     return v.finish()
 
@@ -223,12 +228,12 @@ def main() -> int:
 
   tz_ok = wf_tz == probe["expected_timezone"] and wait_secs == int(probe["expected_wait_seconds"])
   v.check(
-      f"本地时区准点触发（+2 分钟快验，当前 timezone={wf_tz}，等待秒数={wait_secs}s）",
+      f"本地时区准点触发（+2 分钟晨会快验，当前 timezone={wf_tz}，等待秒数={wait_secs}s）",
       tz_ok,
       f"主工作流当前时区为 {wf_tz}（在本地 07:58 设 08:00 需等待 {wait_secs}s 而非 120s）；请将 settings.timezone 显式设为 '{probe['expected_timezone']}'。",
   )
 
-  # 验收项 2：24 小时过滤 + 连续两轮手动触发文章链接零重复
+  # 验收项 2：24 小时过滤 + 连续两轮触发按情报单号/链接幂等零重复
   ref_now = _parse_iso_utc(fixture_data["reference_now_utc"])
   seen_store: set[str] = set()
   run1 = _simulate_n8n_run(main_wf, workflows_by_id, fixture_data["run_1_items"], seen_store, ref_now)
@@ -236,7 +241,7 @@ def main() -> int:
 
   all_pushed = run1["pushed"] + run2["pushed"]
   pushed_links = [item["link"] for item in all_pushed]
-  stale_link = "https://blog.example.com/posts/stale-48h-recap"
+  stale_link = "https://intel.example.com/archive/stale-48h-warehouse-recap"
   dedup_ok = (
       len(run1["pushed"]) == 2
       and len(run2["pushed"]) == 1
@@ -244,9 +249,9 @@ def main() -> int:
       and stale_link not in pushed_links
   )
   v.check(
-      f"近 24h 过滤与连续两轮触发链接零重复（Run1={len(run1['pushed'])}篇，Run2={len(run2['pushed'])}篇，总唯一={len(set(pushed_links))}）",
+      f"近 24h 时效过滤与跨轮单号/链接幂等去重（Run1={len(run1['pushed'])}条，Run2={len(run2['pushed'])}条，总唯一={len(set(pushed_links))}）",
       dedup_ok,
-      "检测到重复链接推送或超过 24 小时的旧文混入；请在 RSS 读取后串联 n8n-nodes-base.filter(24h) 与 n8n-nodes-base.removeDuplicates(operation='removeItemsSeenInPreviousExecutions', keyField='link')。",
+      "检测到跨源转载/二次重跑重复推送，或混入了超过 24 小时的陈旧盘点；请在 RSS 读取后串联 n8n-nodes-base.filter(24h) 与 n8n-nodes-base.removeDuplicates(operation='removeItemsSeenInPreviousExecutions', keyField='event_id' 或 'link')。",
   )
 
   # 验收项 3：LLM 输出 JSON Schema 拦截（title / summary / tags）与禁止静默吞错
@@ -279,7 +284,7 @@ def main() -> int:
       and all("title" in item and "summary" in item and "tags" in item for item in all_pushed)
   )
   v.check(
-      "LLM 节点禁用静默吞错并开启 JSON 字段强校验（拦截坏 JSON 与缺字段输出）",
+      "LLM 节点禁用静默吞错并开启 JSON 字段强校验（拦截坏 JSON 与缺字段情报）",
       schema_guard_ok,
       "请将 LLM 节点的 continueOnFail 设为 false、responseFormat 设为 json_object，并在推送前接入 Validate JSON Schema (n8n-nodes-base.code) 校验 title/summary/tags。",
   )
@@ -303,9 +308,9 @@ def main() -> int:
   total_faults = len(fixture_data["fault_injections"])
   alert_ok = fault_alerts == total_faults and fault_leaks == 0
   v.check(
-      f"Error Trigger 错误工作流绑定与即时告警通知（拦截并告警 {fault_alerts}/{total_faults} 组注入故障）",
+      f"Error Trigger 错误工作流绑定与异常即时告警（拦截并告警 {fault_alerts}/{total_faults} 组注入故障）",
       alert_ok,
-      "注入失效凭证或非法 JSON 时未触发告警；请在 settings.errorWorkflow 填入错误工作流 ID，并在该错误流中配置 Error Trigger -> HTTP Request 告警 Webhook 节点。",
+      "注入失效凭证或非法 JSON 时未触发告警；请在 settings.errorWorkflow 填入错误工作流 ID（intel-digest-error-alert），并在该错误流中配置 Error Trigger -> HTTP Request 告警 Webhook 节点。",
   )
 
   return v.finish()

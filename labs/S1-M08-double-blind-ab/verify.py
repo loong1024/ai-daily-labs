@@ -95,7 +95,7 @@ def _detect_underlying_winner(reply: str, alpha_text: str, beta_text: str) -> st
 
 
 def main() -> None:
-    v = LabVerifier("S1-M08", "二选一怕模型偏心端水？双盲互换 + 事前验尸盲测")
+    v = LabVerifier("S1-M08", "B2B 供应商与技术方案二选一：双盲位置互换 + 事前验尸选型评审")
 
     try:
         target_path = target_file(LAB_DIR, "starter_prompt.md", "solution_prompt.md")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""S6-M01 Promptfoo 回归评测配置与 CI 门禁验收脚本（纯 Python 标准库实现）。"""
+"""S6-M01 电商智能客服分级退赔与订单抽取黄金回归闸门验收脚本（纯 Python 标准库实现）。"""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ REPO_ROOT = LAB_DIR.parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from shared.aid_lab import LabVerifier, chat_complete, target_file, use_solution  # noqa: E402
+from shared.aid_lab import LabVerifier, chat_complete, target_file  # noqa: E402
 
 
 # ---------------- 纯标准库轻量 YAML 解析器 ---------------- #
@@ -197,7 +197,11 @@ _CLAUSE_RE = re.compile(
 
 def _eval_js_assertion(expr: str, output_str: str) -> bool:
     data = json.loads(output_str)
-    cleaned = re.sub(r"^(?:const|let|var)\s+d\s*=\s*JSON\.parse\(output\)\s*;\s*", "", expr.strip())
+    cleaned = re.sub(
+        r"^(?:const|let|var)\s+d\s*=\s*JSON\.parse\(output\)\s*;\s*",
+        "",
+        expr.strip(),
+    )
     for raw_clause in cleaned.split("&&"):
         clause = raw_clause.strip()
         m = _CLAUSE_RE.match(clause)
@@ -216,9 +220,12 @@ def _eval_js_assertion(expr: str, output_str: str) -> bool:
 def _build_prompt_runner(fixtures_by_text: dict[str, dict[str, Any]]):
     def _mock_fn(messages: list[dict[str, str]]) -> str:
         full_prompt = "\n".join(m.get("content", "") for m in messages)
-        has_refund_rule = '"refund"' in full_prompt or "'refund'" in full_prompt
-        has_reject_rule = '"reject"' in full_prompt or "'reject'" in full_prompt
-        embellish_note = "主动润色扩写" in full_prompt
+        has_missing_rule = '"missing_info"' in full_prompt or "'missing_info'" in full_prompt
+        has_escalation_rule = (
+            '"manual_escalation"' in full_prompt or "'manual_escalation'" in full_prompt
+        )
+        has_fraud_rule = '"fraud_reject"' in full_prompt or "'fraud_reject'" in full_prompt
+        embellish_promise = "主动补充致歉赔偿承诺" in full_prompt
 
         matched_case: dict[str, Any] | None = None
         for text_key, item in fixtures_by_text.items():
@@ -228,29 +235,45 @@ def _build_prompt_runner(fixtures_by_text: dict[str, dict[str, Any]]):
 
         if matched_case is None:
             return json.dumps(
-                {"type": "expense", "category": "其他", "amount": 0, "note": "未知输入"},
+                {
+                    "order_id": "MISSING",
+                    "intent": "missing_info",
+                    "refund_amount": 0,
+                    "action": "ask_missing_fields",
+                    "summary": "未知售后请求待核实",
+                },
                 ensure_ascii=False,
             )
 
-        out_type = matched_case["expected_type"]
-        out_cat = matched_case["expected_category"]
-        out_amt = matched_case["expected_amount"]
-        out_note = matched_case["faithful_note"]
+        out_order_id = matched_case["expected_order_id"]
+        out_intent = matched_case["expected_intent"]
+        out_amt = matched_case["expected_refund_amount"]
+        out_action = matched_case["expected_action"]
+        out_summary = matched_case["faithful_summary"]
 
-        if out_type == "refund" and not has_refund_rule:
-            out_type = "expense"
-        if out_type == "reject" and not has_reject_rule:
-            out_type = "expense"
-            out_cat = "日用百货"
-        if embellish_note and matched_case["group"] == "open_note":
-            out_note = f"{out_note}（另含包间茶位费与停车小费 50 元）"
+        if out_intent == "missing_info" and not has_missing_rule:
+            if out_order_id == "MISSING":
+                out_order_id = "ORD-000000"
+            out_intent = "auto_refund"
+            out_action = "approve_small_refund"
+            out_amt = 100
+        if out_intent == "manual_escalation" and not has_escalation_rule:
+            out_intent = "auto_refund"
+            out_action = "approve_small_refund"
+        if out_intent == "fraud_reject" and not has_fraud_rule:
+            out_intent = "auto_refund"
+            out_action = "approve_small_refund"
+            out_amt = 200
+        if embellish_promise and matched_case["group"] == "open_summary":
+            out_summary = f"{out_summary}（另承诺补偿 50 元无门槛现金券并顺丰包邮上门）"
 
         return json.dumps(
             {
-                "type": out_type,
-                "category": out_cat,
-                "amount": out_amt,
-                "note": out_note,
+                "order_id": out_order_id,
+                "intent": out_intent,
+                "refund_amount": out_amt,
+                "action": out_action,
+                "summary": out_summary,
             },
             ensure_ascii=False,
         )
@@ -264,9 +287,9 @@ def _judge_faithfulness(user_text: str, output_str: str) -> bool:
             payload = json.loads(output_str)
         except Exception:
             return "FAIL"
-        note = str(payload.get("note", ""))
-        hallucinated_markers = ["茶位费", "停车小费", "50 元"]
-        if any(tok in note and tok not in user_text for tok in hallucinated_markers):
+        summary = str(payload.get("summary", ""))
+        hallucinated_markers = ["50 元无门槛现金券", "顺丰包邮上门", "免审退款"]
+        if any(tok in summary and tok not in user_text for tok in hallucinated_markers):
             return "FAIL"
         return "PASS"
 
@@ -274,7 +297,7 @@ def _judge_faithfulness(user_text: str, output_str: str) -> bool:
         [
             {
                 "role": "user",
-                "content": f"原输入：{user_text}\n模型输出：{output_str}\n请判断备注是否无编造（PASS/FAIL）：",
+                "content": f"客户原话：{user_text}\n模型输出：{output_str}\n请核查工单摘要是否忠实原话且无编造赔偿承诺（PASS/FAIL）：",
             }
         ],
         mock_fn=_rubric_mock,
@@ -342,10 +365,10 @@ def evaluate_prompt_on_tests(
 
 
 def main() -> int:
-    v = LabVerifier("S6-M01", "Promptfoo 自动回归闸门与回滚验证")
+    v = LabVerifier("S6-M01", "电商智能客服分级退赔与订单抽取黄金回归闸门")
     cfg_path = target_file(LAB_DIR, "starter.yaml", "solution.yaml")
     fixture_cases = json.loads(
-        (LAB_DIR / "fixtures" / "bookkeeping_cases.json").read_text(encoding="utf-8")
+        (LAB_DIR / "fixtures" / "order_triage_cases.json").read_text(encoding="utf-8")
     )
     fixtures_by_text = {item["text"]: item for item in fixture_cases}
 
@@ -360,7 +383,7 @@ def main() -> int:
     prompts = cfg.get("prompts") if isinstance(cfg.get("prompts"), list) else []
     ci_gate = cfg.get("ci_gate") if isinstance(cfg.get("ci_gate"), dict) else {}
 
-    # Check 1: 20+ 样本覆盖与带日期模型快照 + 零温锁定
+    # Check 1: 20+ 全场景样本覆盖（常规查单/小额退赔 + 残缺单 + 大额转人工 + 恶意套话骗退单）与快照/零温锁定
     try:
         first_prov = providers[0] if providers and isinstance(providers[0], dict) else {}
         prov_id = str(first_prov.get("id", ""))
@@ -371,29 +394,34 @@ def main() -> int:
         configured_texts = {
             str((t.get("vars") or {}).get("text", "")) for t in tests if isinstance(t, dict)
         }
-        has_refund = any("退" in txt for txt in configured_texts)
-        has_refusal = any("下雨" in txt or "Python" in txt for txt in configured_texts)
+        has_incomplete = any("挡住" in txt or "咖啡机" in txt or "少了一件" in txt for txt in configured_texts)
+        has_escalation = any("1299" in txt or "增值税专票" in txt or "海鲜礼盒" in txt for txt in configured_texts)
+        has_fraud = any(
+            "最高权限指令" in txt or "运营总监" in txt or "工商投诉+平台介入" in txt
+            for txt in configured_texts
+        )
 
         ok_cov = (
             len(tests) >= 20
             and has_date_snapshot
             and temp_locked
-            and has_refund
-            and has_refusal
+            and has_incomplete
+            and has_escalation
+            and has_fraud
         )
         v.check(
-            "20+ 全场景回归样本覆盖与模型快照/零温锁定",
+            "20+ 全场景售后样本覆盖（含常规单/残缺单/大额转人工/骗退单）与快照零温锁定",
             ok_cov,
-            "请在配置文件中纳入至少 20 条样本（覆盖常规、退款、开放备注与拒答），并在 providers 中锁定带日期模型快照（如 gpt-4o-mini-2024-07-18）及 temperature: 0。",
+            "请在配置文件中纳入 fixtures/order_triage_cases.json 的全部 20 条样本（覆盖常规查单、残缺单、大额转人工与恶意套话骗退单），并在 providers 中锁定带日期快照（如 gpt-4o-mini-2024-07-18）及 temperature: 0。",
         )
     except Exception as exc:
         v.check(
-            "20+ 全场景回归样本覆盖与模型快照/零温锁定",
+            "20+ 全场景售后样本覆盖（含常规单/残缺单/大额转人工/骗退单）与快照零温锁定",
             False,
             f"检查模型与测试集配置时异常：{exc}",
         )
 
-    # Check 2: 断言分层纪律（确定性断言全覆盖，llm-rubric 仅用于开放备注）
+    # Check 2: 断言分层纪律（is-json/javascript 兜底分流与金额字段，llm-rubric 仅用于复杂工单摘要忠实度）
     try:
         det_covered = 0
         rubric_count = 0
@@ -413,13 +441,13 @@ def main() -> int:
             and 1 <= rubric_count <= 5
         )
         v.check(
-            "断言分层纪律（is-json/javascript 兜底结构，llm-rubric 仅测开放备注）",
+            "断言分层纪律（is-json/javascript 核验订单与分流字段，llm-rubric 仅测复杂摘要）",
             ok_assert,
-            "请为每条用例配置 is-json 与 javascript/contains 确定性断言，并仅在 1~5 条开放式备注用例上使用 llm-rubric。",
+            "请为每条用例配置 is-json 与 javascript/contains 确定性断言校验 order_id/intent/action/refund_amount，并仅在 1~5 条复杂升级人工用例上使用 llm-rubric 核查工单摘要忠实度。",
         )
     except Exception as exc:
         v.check(
-            "断言分层纪律（is-json/javascript 兜底结构，llm-rubric 仅测开放备注）",
+            "断言分层纪律（is-json/javascript 核验订单与分流字段，llm-rubric 仅测复杂摘要）",
             False,
             f"检查断言配置异常：{exc}",
         )
@@ -438,13 +466,13 @@ def main() -> int:
         else:
             all_rates_ok = False
         v.check(
-            "v1 与 v2 候选提示词并排评测达标（通过率 >= 95%）",
+            "v1 基线与 v2 候选提示词并排评测达标（通过率 >= 95%）",
             all_rates_ok,
-            "请将 prompts 中的坏提示词替换为修复后的 file://prompts/classify_v2.txt，确保 v1 与 v2 在 20 条用例上均达到 95% 以上通过率。",
+            "请将 prompts 中的坏提示词替换为修复后的 file://prompts/triage_v2.txt，确保 v1 与 v2 在 20 条售后回归用例上均达到 95% 以上通过率。",
         )
     except Exception as exc:
         v.check(
-            "v1 与 v2 候选提示词并排评测达标（通过率 >= 95%）",
+            "v1 基线与 v2 候选提示词并排评测达标（通过率 >= 95%）",
             False,
             f"运行并排评测异常：{exc}",
         )
@@ -457,7 +485,7 @@ def main() -> int:
 
         if block_enabled and min_rate >= 0.90 and rollback_ref and len(tests) >= 20:
             broken_passed, broken_total = evaluate_prompt_on_tests(
-                "file://prompts/classify_v2_broken.txt", tests, fixtures_by_text
+                "file://prompts/triage_v2_broken.txt", tests, fixtures_by_text
             )
             broken_rate = broken_passed / max(1, broken_total)
             gate_intercepted = broken_rate < min_rate
@@ -473,7 +501,7 @@ def main() -> int:
         v.check(
             "CI 退化自动失败拦截与切回 v1 秒级恢复基线",
             ok_gate,
-            "请在 ci_gate 中开启 block_on_regression: true、设置 min_pass_rate: 0.95，并指定 rollback_prompt: file://prompts/classify_v1.txt。",
+            "请在 ci_gate 中开启 block_on_regression: true、设置 min_pass_rate: 0.95，并指定 rollback_prompt: file://prompts/triage_v1.txt。",
         )
     except Exception as exc:
         v.check(

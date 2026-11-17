@@ -1,13 +1,13 @@
 [
   {
-    "id": "rss-daily-digest-main",
-    "name": "AI Daily RSS Digest (Local TZ + Dedup + Schema Guard)",
+    "id": "intel-daily-digest-main",
+    "name": "Competitor & Industry Intel Stream (Local TZ + Idempotent Dedup + Error Alert)",
     "active": true,
     "settings": {
       "executionOrder": "v1",
       "saveExecutionProgress": true,
       "timezone": "Asia/Shanghai",
-      "errorWorkflow": "rss-digest-error-alert"
+      "errorWorkflow": "intel-digest-error-alert"
     },
     "nodes": [
       {
@@ -15,7 +15,10 @@
         "name": "Schedule Trigger",
         "type": "n8n-nodes-base.scheduleTrigger",
         "typeVersion": 1.2,
-        "position": [180, 300],
+        "position": [
+          180,
+          300
+        ],
         "parameters": {
           "rule": {
             "interval": [
@@ -25,27 +28,33 @@
               }
             ]
           },
-          "notes": "验证时先设为当前本地时间后 2 分钟（如 07:58 设为 08:00），确认 Asia/Shanghai 准点触发后再固定早 8:00。"
+          "notes": "验证时先设为当前本地时间后 2 分钟（如 07:58 设为 08:00），确认 Asia/Shanghai 准点触发后再固定晨会前 08:00。"
         }
       },
       {
         "id": "node-rss-a",
-        "name": "RSS Read Feed A",
+        "name": "RSS Read Competitor Feed",
         "type": "n8n-nodes-base.rssFeedRead",
         "typeVersion": 1.1,
-        "position": [400, 210],
+        "position": [
+          400,
+          210
+        ],
         "parameters": {
-          "url": "https://hnrss.org/newest?q=AI"
+          "url": "https://intel.example.com/competitor/rss.xml"
         }
       },
       {
         "id": "node-rss-b",
-        "name": "RSS Read Feed B",
+        "name": "RSS Read Policy Feed",
         "type": "n8n-nodes-base.rssFeedRead",
         "typeVersion": 1.1,
-        "position": [400, 390],
+        "position": [
+          400,
+          390
+        ],
         "parameters": {
-          "url": "https://changelog.com/feed"
+          "url": "https://policy.example.org/industry/rss.xml"
         }
       },
       {
@@ -53,7 +62,10 @@
         "name": "Filter Last 24h",
         "type": "n8n-nodes-base.filter",
         "typeVersion": 2.0,
-        "position": [620, 300],
+        "position": [
+          620,
+          300
+        ],
         "parameters": {
           "windowHours": 24,
           "dateField": "pubDate",
@@ -69,15 +81,18 @@
         }
       },
       {
-        "id": "node-dedup-link",
-        "name": "Deduplicate By Link",
+        "id": "node-dedup-id-link",
+        "name": "Deduplicate By Event ID & Link",
         "type": "n8n-nodes-base.removeDuplicates",
         "typeVersion": 2.0,
-        "position": [840, 300],
+        "position": [
+          840,
+          300
+        ],
         "parameters": {
           "operation": "removeItemsSeenInPreviousExecutions",
-          "dedupeValue": "={{ $json.link }}",
-          "keyField": "link",
+          "dedupeValue": "={{ $json.event_id || $json.link }}",
+          "keyField": "event_id",
           "options": {
             "historySize": 1000
           }
@@ -85,15 +100,18 @@
       },
       {
         "id": "node-llm-1",
-        "name": "LLM Structured Summary",
+        "name": "LLM Intel Summary",
         "type": "@n8n/n8n-nodes-langchain.openAi",
         "typeVersion": 1.4,
         "continueOnFail": false,
-        "position": [1080, 300],
+        "position": [
+          1080,
+          300
+        ],
         "parameters": {
-          "model": "gpt-4o-mini",
+          "model": "mini-instruct",
           "responseFormat": "json_object",
-          "systemPrompt": "你是技术情报摘要助手。请仅输出严格 JSON 对象，必须包含三个字段：title（中文标题字符串）、summary（60字以内核心摘要字符串）、tags（1-4个技术标签字符串数组）。"
+          "systemPrompt": "你是商业竞品与行业异动情报分析师。请仅输出严格 JSON 对象，必须包含三个字段：title（精炼异动标题字符串）、summary（60字以内业务冲击与应对建议字符串）、tags（1-4个异动分类标签字符串数组，如[\"竞品调价\",\"清关新规\"]）。"
         }
       },
       {
@@ -102,19 +120,29 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2.0,
         "continueOnFail": false,
-        "position": [1320, 300],
+        "position": [
+          1320,
+          300
+        ],
         "parameters": {
-          "requiredFields": ["title", "summary", "tags"],
+          "requiredFields": [
+            "title",
+            "summary",
+            "tags"
+          ],
           "jsCode": "for (const item of $input.all()) {\n  const payload = typeof item.json.output === 'string' ? JSON.parse(item.json.output) : item.json;\n  if (!payload.title || typeof payload.title !== 'string') throw new Error('Missing string field: title');\n  if (!payload.summary || typeof payload.summary !== 'string') throw new Error('Missing string field: summary');\n  if (!Array.isArray(payload.tags) || payload.tags.length === 0) throw new Error('Missing non-empty array field: tags');\n}\nreturn $input.all();"
         }
       },
       {
         "id": "node-webhook-push",
-        "name": "Push Digest Webhook",
+        "name": "Push Intel Digest Webhook",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "continueOnFail": false,
-        "position": [1560, 300],
+        "position": [
+          1560,
+          300
+        ],
         "parameters": {
           "method": "POST",
           "url": "https://webhook.site/00000000-0000-0000-0000-000000000001",
@@ -127,46 +155,90 @@
       "Schedule Trigger": {
         "main": [
           [
-            {"node": "RSS Read Feed A", "type": "main", "index": 0},
-            {"node": "RSS Read Feed B", "type": "main", "index": 0}
+            {
+              "node": "RSS Read Competitor Feed",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "RSS Read Policy Feed",
+              "type": "main",
+              "index": 0
+            }
           ]
         ]
       },
-      "RSS Read Feed A": {
+      "RSS Read Competitor Feed": {
         "main": [
-          [{"node": "Filter Last 24h", "type": "main", "index": 0}]
+          [
+            {
+              "node": "Filter Last 24h",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
-      "RSS Read Feed B": {
+      "RSS Read Policy Feed": {
         "main": [
-          [{"node": "Filter Last 24h", "type": "main", "index": 0}]
+          [
+            {
+              "node": "Filter Last 24h",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
       "Filter Last 24h": {
         "main": [
-          [{"node": "Deduplicate By Link", "type": "main", "index": 0}]
+          [
+            {
+              "node": "Deduplicate By Event ID & Link",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
-      "Deduplicate By Link": {
+      "Deduplicate By Event ID & Link": {
         "main": [
-          [{"node": "LLM Structured Summary", "type": "main", "index": 0}]
+          [
+            {
+              "node": "LLM Intel Summary",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
-      "LLM Structured Summary": {
+      "LLM Intel Summary": {
         "main": [
-          [{"node": "Validate JSON Schema", "type": "main", "index": 0}]
+          [
+            {
+              "node": "Validate JSON Schema",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
       "Validate JSON Schema": {
         "main": [
-          [{"node": "Push Digest Webhook", "type": "main", "index": 0}]
+          [
+            {
+              "node": "Push Intel Digest Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       }
     }
   },
   {
-    "id": "rss-digest-error-alert",
-    "name": "RSS Digest Error Alert Workflow",
+    "id": "intel-digest-error-alert",
+    "name": "Intel Stream Error Alert Workflow",
     "active": true,
     "settings": {
       "executionOrder": "v1",
@@ -178,7 +250,10 @@
         "name": "Error Trigger",
         "type": "n8n-nodes-base.errorTrigger",
         "typeVersion": 1.0,
-        "position": [240, 300],
+        "position": [
+          240,
+          300
+        ],
         "parameters": {}
       },
       {
@@ -186,19 +261,28 @@
         "name": "Push Error Alert Webhook",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
-        "position": [520, 300],
+        "position": [
+          520,
+          300
+        ],
         "parameters": {
           "method": "POST",
           "url": "https://webhook.site/00000000-0000-0000-0000-000000000002",
           "sendBody": true,
-          "jsonBody": "={\"alert\":\"n8n_workflow_failed\",\"workflow\":$json.workflow.name,\"node\":$json.execution.lastNodeExecuted,\"error\":$json.execution.error.message}"
+          "jsonBody": "={\"alert\":\"intel_workflow_failed\",\"workflow\":$json.workflow.name,\"node\":$json.execution.lastNodeExecuted,\"error\":$json.execution.error.message}"
         }
       }
     ],
     "connections": {
       "Error Trigger": {
         "main": [
-          [{"node": "Push Error Alert Webhook", "type": "main", "index": 0}]
+          [
+            {
+              "node": "Push Error Alert Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       }
     }

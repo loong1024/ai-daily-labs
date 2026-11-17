@@ -1,9 +1,9 @@
-# S6-M01 记账分类回归评测配置 —— 起点半成品（存在多处回归门禁缺陷）
-description: "记账分类回归评测（基线草稿）"
+# S6-M01 电商客服分级退赔与订单抽取回归评测 —— 起点半成品（存在多处回归门禁缺陷）
+description: "电商智能客服退赔分流回归评测（基线草稿）"
 
 prompts:
-  - file://prompts/classify_v1.txt
-  - file://prompts/classify_v2_broken.txt
+  - file://prompts/triage_v1.txt
+  - file://prompts/triage_v2_broken.txt
 
 providers:
   - id: openai:chat:gpt-4o-mini
@@ -16,24 +16,24 @@ ci_gate:
   rollback_prompt: ""
 
 tests:
-  - description: "简单午饭样例"
+  - description: "简单查快递样例"
     vars:
-      case_id: "bk_01"
-      text: "午饭 兰州牛肉面 28 元"
+      case_id: "cs_01"
+      text: "麻烦查下订单 ORD-880101 发什么快递、大概哪天能到杭州？"
     assert:
       - type: llm-rubric
-        value: "输出看起来是餐饮分类即可"
-  - description: "简单打车样例"
+        value: "输出看起来能查物流即可"
+  - description: "简单催发货样例"
     vars:
-      case_id: "bk_02"
-      text: "早高峰打车去虹桥火车站 65 元"
+      case_id: "cs_02"
+      text: "订单号 ORD-880102 还没揽收，帮我确认下今天仓库能不能发出"
     assert:
       - type: llm-rubric
-        value: "输出看起来是交通分类即可"
-  - description: "简单买书样例"
+        value: "输出包含订单号即可"
+  - description: "简单小额退差样例"
     vars:
-      case_id: "bk_05"
-      text: "买技术书《数据密集型应用系统设计》 89 元"
+      case_id: "cs_06"
+      text: "单号 ORD-880202 昨晚买贵了，同款今天官旗直降了 35 元，申请退保价差额 35 元"
     assert:
       - type: llm-rubric
-        value: "输出包含买书金额即可"
+        value: "输出同意退差价 35 元即可"

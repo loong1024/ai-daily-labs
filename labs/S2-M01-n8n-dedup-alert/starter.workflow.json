@@ -1,7 +1,7 @@
 [
   {
-    "id": "rss-daily-digest-main",
-    "name": "AI Daily RSS Digest (Starter Baseline)",
+    "id": "intel-daily-digest-main",
+    "name": "Competitor & Industry Intel Stream (Starter Baseline)",
     "active": false,
     "settings": {
       "executionOrder": "v1",
@@ -14,7 +14,10 @@
         "name": "Schedule Trigger",
         "type": "n8n-nodes-base.scheduleTrigger",
         "typeVersion": 1.2,
-        "position": [220, 300],
+        "position": [
+          220,
+          300
+        ],
         "parameters": {
           "rule": {
             "interval": [
@@ -28,43 +31,55 @@
       },
       {
         "id": "node-rss-a",
-        "name": "RSS Read Feed A",
+        "name": "RSS Read Competitor Feed",
         "type": "n8n-nodes-base.rssFeedRead",
         "typeVersion": 1.1,
-        "position": [440, 220],
+        "position": [
+          440,
+          220
+        ],
         "parameters": {
-          "url": "https://hnrss.org/newest?q=AI"
+          "url": "https://intel.example.com/competitor/rss.xml"
         }
       },
       {
         "id": "node-rss-b",
-        "name": "RSS Read Feed B",
+        "name": "RSS Read Policy Feed",
         "type": "n8n-nodes-base.rssFeedRead",
         "typeVersion": 1.1,
-        "position": [440, 380],
+        "position": [
+          440,
+          380
+        ],
         "parameters": {
-          "url": "https://changelog.com/feed"
+          "url": "https://policy.example.org/industry/rss.xml"
         }
       },
       {
         "id": "node-llm-1",
-        "name": "LLM Structured Summary",
+        "name": "LLM Intel Summary",
         "type": "@n8n/n8n-nodes-langchain.openAi",
         "typeVersion": 1.4,
         "continueOnFail": true,
-        "position": [700, 300],
+        "position": [
+          700,
+          300
+        ],
         "parameters": {
-          "model": "gpt-4o-mini",
+          "model": "mini-instruct",
           "responseFormat": "text",
-          "systemPrompt": "请把输入的 RSS 文章总结一下。"
+          "systemPrompt": "请把输入的竞品动态与行业政策通知总结一下。"
         }
       },
       {
         "id": "node-webhook-push",
-        "name": "Push Digest Webhook",
+        "name": "Push Intel Digest Webhook",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
-        "position": [960, 300],
+        "position": [
+          960,
+          300
+        ],
         "parameters": {
           "method": "POST",
           "url": "https://webhook.site/00000000-0000-0000-0000-000000000001"
@@ -75,31 +90,57 @@
       "Schedule Trigger": {
         "main": [
           [
-            {"node": "RSS Read Feed A", "type": "main", "index": 0},
-            {"node": "RSS Read Feed B", "type": "main", "index": 0}
+            {
+              "node": "RSS Read Competitor Feed",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "RSS Read Policy Feed",
+              "type": "main",
+              "index": 0
+            }
           ]
         ]
       },
-      "RSS Read Feed A": {
+      "RSS Read Competitor Feed": {
         "main": [
-          [{"node": "LLM Structured Summary", "type": "main", "index": 0}]
+          [
+            {
+              "node": "LLM Intel Summary",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
-      "RSS Read Feed B": {
+      "RSS Read Policy Feed": {
         "main": [
-          [{"node": "LLM Structured Summary", "type": "main", "index": 0}]
+          [
+            {
+              "node": "LLM Intel Summary",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
-      "LLM Structured Summary": {
+      "LLM Intel Summary": {
         "main": [
-          [{"node": "Push Digest Webhook", "type": "main", "index": 0}]
+          [
+            {
+              "node": "Push Intel Digest Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       }
     }
   },
   {
-    "id": "rss-digest-error-alert",
-    "name": "RSS Digest Error Alert Workflow (TODO Stub)",
+    "id": "intel-digest-error-alert",
+    "name": "Intel Stream Error Alert Workflow (TODO Stub)",
     "active": false,
     "settings": {
       "executionOrder": "v1",

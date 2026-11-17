@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>个人习惯打卡与日常开支小看板（Starter 初稿）</title>
+  <title>门店/个人经营收支与目标追踪可视化看板（Starter 初稿）</title>
   <style>
     body {
       font-family: system-ui, -apple-system, sans-serif;
       margin: 24px;
       color: #1f2937;
-      background: #f9fafb;
+      background: #f8fafc;
     }
     .box {
       background: #ffffff;
-      border: 1px solid #d1d5db;
+      border: 1px solid #cbd5e1;
       padding: 16px;
       margin-bottom: 16px;
     }
@@ -27,58 +27,58 @@
       padding: 6px 10px;
       font-size: 14px;
     }
-    /* TODO(第二轮)：升级为桌面左录入右列表、移动端(@media)单栏的圆角卡片布局，并为习惯打卡/日常开支配置青绿与暖橙双色标签 */
+    /* TODO(第二轮)：升级为桌面左录入右看板、移动端(@media)单栏的圆角卡片布局，并为经营收入/经营支出配置翠绿与暖橙双色标签 */
   </style>
 </head>
 <body>
-  <h1>个人习惯打卡与日常开支小看板</h1>
+  <h1>门店/个人经营收支与目标追踪可视化看板</h1>
 
   <div class="box">
-    <h2>新增记录</h2>
+    <h2>新增经营流水</h2>
     <label>日期
       <input id="dateInput" type="date" value="2026-03-01" />
     </label>
-    <label>事项名称
-      <input id="titleInput" type="text" placeholder="例如：晨间阅读 30 分钟 / 午餐假设开支" />
+    <label>事项摘要
+      <input id="titleInput" type="text" placeholder="例如：周末市集饮品零售 / 云南咖啡豆采购（假设）" />
     </label>
-    <label>记录类型
+    <label>收支类型
       <select id="typeInput">
-        <option value="习惯打卡">习惯打卡</option>
-        <option value="日常开支">日常开支</option>
+        <option value="经营收入">经营收入</option>
+        <option value="经营支出">经营支出</option>
       </select>
     </label>
-    <label>分类标签
+    <label>经营分类
       <select id="categoryInput">
-        <option value="阅读">阅读</option>
-        <option value="运动">运动</option>
-        <option value="餐饮">餐饮</option>
-        <option value="交通">交通</option>
+        <option value="门店零售">门店零售</option>
+        <option value="线上团购">线上团购</option>
+        <option value="原料采购">原料采购</option>
+        <option value="水电杂费">水电杂费</option>
       </select>
     </label>
-    <label>数值备注（打卡分钟数或假设开支元）
-      <input id="valueInput" type="number" step="0.01" value="25" />
+    <label>假设金额（元）
+      <input id="amountInput" type="number" step="0.01" value="120" />
     </label>
-    <button id="addBtn" type="button">保存记录</button>
+    <button id="addBtn" type="button">保存流水</button>
     <!-- TODO(第三轮)：新增“填入示例数据”与“导出 CSV”按钮 -->
   </div>
 
   <div class="box">
-    <h2>记录列表</h2>
-    <!-- TODO(第一轮)：补充按记录类型与分类标签的筛选下拉框，以及实时统计累计打卡次数与假设开支总额 -->
+    <h2>流水明细</h2>
+    <!-- TODO(第一轮)：补充月度营收目标设定与可视化达成进度条、各分类占比条形图、类型/分类筛选下拉框及总收入/总支出/净结余实时汇总 -->
     <ul id="recordList"></ul>
   </div>
 
   <script>
     // 当前仅保存在内存数组中，刷新页面即丢失！
-    // TODO(第一轮)：改用 localStorage 持久保存，并实现按类型/分类筛选与顶部实时汇总统计。
-    // TODO(第二轮)：事项名称为空时拦截提交并轻提示；单条删除前调用 confirm 二次确认。
-    // TODO(第三轮)：支持一键填入 5+ 条示例数据，以及导出带 \uFEFF BOM 头与引号转义的 CSV 文件。
+    // TODO(第一轮)：接入 localStorage 持久保存流水与月度目标，渲染目标达成率进度条与收支净结余汇总。
+    // TODO(第二轮)：事项摘要为空或金额 <= 0 时拦截提交并轻提示；单条删除前调用 confirm 二次确认。
+    // TODO(第三轮)：支持一键填入 6 条基准示例数据，以及导出带 \uFEFF BOM 头与双引号转义的 CSV 文件。
     const records = [];
 
     function render() {
       const listEl = document.getElementById("recordList");
       listEl.innerHTML = records
-        .map((item) => `<li>${item.date} [${item.type}/${item.category}] ${item.title} - ${item.value}</li>`)
+        .map((item) => `<li>${item.date} [${item.type}/${item.category}] ${item.title} - ¥${item.amount}</li>`)
         .join("");
     }
 
@@ -88,7 +88,7 @@
         title: document.getElementById("titleInput").value,
         type: document.getElementById("typeInput").value,
         category: document.getElementById("categoryInput").value,
-        value: Number(document.getElementById("valueInput").value || 0),
+        amount: Number(document.getElementById("amountInput").value || 0),
       });
       render();
     });

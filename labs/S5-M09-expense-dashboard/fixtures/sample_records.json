@@ -1,70 +1,71 @@
 {
-  "schema_version": "1.0",
-  "description": "个人习惯打卡与日常开支交互看板测试样本（含逗号、双引号转义边界与多维筛选汇总预期值）",
+  "schema_version": "2.0",
+  "description": "门店/个人经营收支与目标追踪可视化看板验收基准样本（含逗号、双引号 CSV 转义边界及月度目标达成率预期值）",
+  "default_monthly_target": 5000.0,
   "supported_types": [
-    "习惯打卡",
-    "日常开支"
+    "经营收入",
+    "经营支出"
   ],
   "supported_categories": [
-    "阅读",
-    "运动",
-    "餐饮",
-    "交通"
+    "门店零售",
+    "线上团购",
+    "原料采购",
+    "水电杂费"
   ],
   "records": [
     {
       "id": "rec-01",
       "date": "2026-03-01",
-      "title": "精读《人月神话》第二章",
-      "type": "习惯打卡",
-      "category": "阅读",
-      "value": 45,
-      "note": "专注阅读 45 分钟"
+      "title": "手冲精品挂耳礼盒首团（假设）",
+      "type": "经营收入",
+      "category": "线上团购",
+      "amount": 1680.0,
+      "note": "企微私域首团回款"
     },
     {
       "id": "rec-02",
       "date": "2026-03-01",
-      "title": "工作日简餐, 鸡胸肉能量碗（假设）",
-      "type": "日常开支",
-      "category": "餐饮",
-      "value": 28.5,
+      "title": "云南水洗咖啡生豆, 10kg装（假设）",
+      "type": "经营支出",
+      "category": "原料采购",
+      "amount": 620.5,
       "note": "含英文逗号的标题测试 CSV 分列安全"
     },
     {
       "id": "rec-03",
       "date": "2026-03-02",
-      "title": "夜跑 5 公里有氧打卡",
-      "type": "习惯打卡",
-      "category": "运动",
-      "value": 32,
-      "note": "配速稳定 32 分钟"
+      "title": "周末社区市集现磨饮品零售（假设）",
+      "type": "经营收入",
+      "category": "门店零售",
+      "amount": 1250.0,
+      "note": "周六全天出杯流水"
     },
     {
       "id": "rec-04",
       "date": "2026-03-02",
-      "title": "地铁通勤往返（假设）",
-      "type": "日常开支",
-      "category": "交通",
-      "value": 12.0,
-      "note": "日常公共交通假设开支"
+      "title": "门店电费与宽带月度分摊（假设）",
+      "type": "经营支出",
+      "category": "水电杂费",
+      "amount": 310.0,
+      "note": "日常固定运营杂费"
     },
     {
       "id": "rec-05",
       "date": "2026-03-03",
-      "title": "手冲咖啡豆 \"浅烘果香\"（假设）",
-      "type": "日常开支",
-      "category": "餐饮",
-      "value": 65.0,
+      "title": "燕麦奶整箱补货 \"咖啡师专用版\"（假设）",
+      "type": "经营支出",
+      "category": "原料采购",
+      "amount": 240.0,
       "note": "含双引号的标题测试 CSV 转义"
     },
     {
       "id": "rec-06",
       "date": "2026-03-03",
-      "title": "晨间核心力量训练",
-      "type": "习惯打卡",
-      "category": "运动",
-      "value": 25,
-      "note": "居家垫上训练 25 分钟"
+      "title": "周边写字楼下午茶拼单（假设）",
+      "type": "经营收入",
+      "category": "线上团购",
+      "amount": 890.0,
+      "note": "工作日企业下午茶营收"
     }
   ],
   "expected_views": {
@@ -72,22 +73,26 @@
       "filter_type": "全部",
       "filter_category": "全部",
       "visible_count": 6,
-      "habit_count": 3,
-      "expense_total": 105.5
+      "income_total": 3820.0,
+      "expense_total": 1170.5,
+      "net_balance": 2649.5,
+      "target_progress_pct": 76.4
     },
-    "only_habit": {
-      "filter_type": "习惯打卡",
+    "only_income": {
+      "filter_type": "经营收入",
       "filter_category": "全部",
       "visible_count": 3,
-      "habit_count": 3,
-      "expense_total": 0.0
+      "income_total": 3820.0,
+      "expense_total": 0.0,
+      "net_balance": 3820.0
     },
-    "food_expense": {
-      "filter_type": "日常开支",
-      "filter_category": "餐饮",
+    "raw_material_expense": {
+      "filter_type": "经营支出",
+      "filter_category": "原料采购",
       "visible_count": 2,
-      "habit_count": 0,
-      "expense_total": 93.5
+      "income_total": 0.0,
+      "expense_total": 860.5,
+      "net_balance": -860.5
     }
   }
 }

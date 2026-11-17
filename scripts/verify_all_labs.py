@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""并行批量验收全部 66 个实验目录。
+"""并行批量验收全部 48 个精选场景实验目录。
 
 用法：
-  python3 scripts/verify_all_labs.py --solution     # 验证全部 66 个实验的 solution 均 100% PASS (exit 0)
+  python3 scripts/verify_all_labs.py --solution     # 验证全部 48 个实验的 solution 均 100% PASS (exit 0)
   python3 scripts/verify_all_labs.py --audit-both   # 同时审计：starter 默认处于待完成状态(exit 1) 且 solution 100% 通过(exit 0)
 """
 
@@ -30,7 +30,7 @@ def run_one(lab_dir: pathlib.Path, audit_both: bool) -> tuple[str, bool, str]:
   if not fixtures_dir.is_dir() or not any(fixtures_dir.iterdir()):
     return lab_dir.name, False, "缺少非空 fixtures/ 测试样本目录"
 
-  env = dict(os.environ, AID_FORCE_MOCK="1", PYTHONPATH=str(ROOT))
+  env = dict(os.environ, AID_FORCE_MOCK="1", PYTHONDONTWRITEBYTECODE="1", PYTHONPATH=str(ROOT))
   sol = subprocess.run(
       [sys.executable, str(verify_py), "--solution"],
       cwd=str(lab_dir),
