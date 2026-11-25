@@ -1,5 +1,7 @@
 # AI 日课 · 48 个精选高代入感真实场景实验总仓 (`ai-daily-labs`)
 
+> 本仓内容来自 AI 日课 App——完整课程与讲解在 App Store 搜索 AI日课。
+
 [![Verify All 48 Labs](https://github.com/loong1024/ai-daily-labs/actions/workflows/verify-labs.yml/badge.svg)](https://github.com/loong1024/ai-daily-labs/actions/workflows/verify-labs.yml)
 [![Open in GitHub Codespaces](https://img.shields.io/badge/GitHub_Codespaces-一键云端免装开练-181717?logo=github)](https://codespaces.new/loong1024/ai-daily-labs)
 [![AI 日课在线教程](https://img.shields.io/badge/AI_日课_v3.0-五步场景假设驱动实战平台-0f766e)](https://ai-daily-dot-leonxingexp-sandbox-396955.uc.r.appspot.com/#/materials)
